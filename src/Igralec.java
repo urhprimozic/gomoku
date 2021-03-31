@@ -8,4 +8,7 @@ public enum Igralec {
 	public Polje getPolje() {
 		return (this == C ? Polje.C : Polje.B);
 	}
+    public Stanje zmaga(){
+        return (this == C ? Stanje.ZMAGA_C : Stanje.ZMAGA_B)
+    }
 }
