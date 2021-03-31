@@ -3,11 +3,12 @@
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Deque;
 
 public class Igra {
 
-    public int visina;
-    public int sirina;
+    // Dimenzije polja
+    public int sirina, visina;
 
     // Igralno polje
     private Polje[][] plosca;
@@ -16,22 +17,28 @@ public class Igra {
     // Vrednost je poljubna, če je igre konec (se pravi, lahko je napačna).
     public Igralec naPotezi;
 
+    // odigrane poteze
+    public Deque<Poteza> odigranePoteze;
+
     /**
      * Nova igra, v začetni poziciji je prazna in na potezi je O.
      */
     public Igra(int visina, int sirina) {
-        // Jon
-        plosca = new Polje[N][N];
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
+        plosca = new Polje[visina][sirina];
+        for (int i = 0; i < visina; i++) {
+            for (int j = 0; j < sirina; j++) {
                 plosca[i][j] = Polje.PRAZNO;
             }
         }
-        naPotezi = Igralec.O;
+
+        naPotezi = Igralec.C;
+        this.sirina = sirina;
+        this.visina = visina;
+        odigranePoteze = new LinkedList<Poteza>();
     }
 
     /**
-     * @return seznam možnih potez
+     * @return seznam vseh možnih potez v tem tenutku poteza je tipa koordinata
      */
     public List<Koordinati> moznePoteze() {
         // urh
@@ -96,11 +103,12 @@ public class Igra {
     }
 
     public boolean odigraj(Koordinati p) {
-        // jon
-        // true - če je bla uspešno odigrana poteza
+        int x = p.getX();
+        int y = p.getY();
+        if (plosca[x][y] == Polje.PRAZNO) {
+            plosca[x][y] = naPotezi.getPolje();
+            odigranePoteze.add(new Poteza(x, y, naPotezi));
 
-        if (plosca[p.getX()][p.getY()] == Polje.PRAZNO) {
-            plosca[p.getX()][p.getY()] = naPotezi.getPolje();
             naPotezi = naPotezi.nasprotnik();
             return true;
         } else {
@@ -109,7 +117,8 @@ public class Igra {
     }
 
     public void razveljaviZadnjo() {
-        // jon
-        // dodaj nek seznam odigranih
+        if (odigranePoteze != null) {
+            odigranePoteze.removeLast();
+        }
     }
 }
