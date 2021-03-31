@@ -1,3 +1,3 @@
 public enum Polje {
-//jon
+	C, B, PRAZNO;
 }
