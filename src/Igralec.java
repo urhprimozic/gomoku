@@ -9,6 +9,6 @@ public enum Igralec {
 		return (this == C ? Polje.C : Polje.B);
 	}
     public Stanje zmaga(){
-        return (this == C ? Stanje.ZMAGA_C : Stanje.ZMAGA_B)
+        return (this == C ? Stanje.ZMAGA_C : Stanje.ZMAGA_B);
     }
 }
