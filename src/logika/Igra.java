@@ -23,6 +23,10 @@ public class Igra {
     /**
      * Nova igra, v začetni poziciji je prazna in na potezi je O.
      */
+    public Igra() {
+    	this(15, 15);
+    }
+    
     public Igra(int visina, int sirina) {
         plosca = new Polje[visina][sirina];
         for (int i = 0; i < visina; i++) {
@@ -35,6 +39,11 @@ public class Igra {
         this.sirina = sirina;
         this.visina = visina;
         odigranePoteze = new LinkedList<Poteza>();
+    }
+    
+    @Override
+    public String toString() {
+    	return Integer.toString(sirina);
     }
 
     /**
