@@ -68,7 +68,7 @@ public class Igra {
         int x = zacetek.getX();
         int y = zacetek.getY();
         int stevec = 0; // število zaporednih žetonov igralca
-        while (x < sirina && y < visina) {
+        while (x < sirina && y < visina && 0 <= x && 0 <= y) {
             if (plosca[x][y] == igralec.getPolje())
                 stevec++;
             // tok se je prekinil
