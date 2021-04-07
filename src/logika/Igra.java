@@ -43,7 +43,17 @@ public class Igra {
     
     @Override
     public String toString() {
-    	return Integer.toString(sirina);
+        String ans = "\nIgra " + Integer.toString(visina) + "x" + Integer.toString(visina) + "\n";
+        for(Polje[] vrstica : plosca){
+            for(Polje p : vrstica){
+                if (p == Polje.B)ans+=" B ";
+                if (p == Polje.C)ans+=" C ";
+                if (p == Polje.PRAZNO)ans+=" . ";
+            }
+
+            ans += "\n";
+        }
+    	return ans;
     }
 
     /**
