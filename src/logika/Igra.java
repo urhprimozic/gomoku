@@ -125,6 +125,15 @@ public class Igra {
         }
     }
 
+    public void odigrajNakljucnoPotezo() {
+        List<splosno.Koordinati> mozne = moznePoteze();
+        splosno.Koordinati poteza = mozne.get((int) (Math.random() * mozne.size()));
+        if (!odigraj(poteza)) {
+            System.out.println(
+                    "ERROR - odigrajNakljucno je odigral ilegalno potezo.\n Napaka v moznePoteze()\n ali odigraj()");
+        }
+    }
+
     public void razveljaviZadnjo() {
         if (odigranePoteze != null) {
             odigranePoteze.removeLast();
