@@ -43,7 +43,7 @@ public class Igra {
     
     @Override
     public String toString() {
-        String ans = "\nIgra " + Integer.toString(visina) + "x" + Integer.toString(visina) + "\n";
+        String ans = "\nIgra " + Integer.toString(visina) + "x" + Integer.toString(sirina) + "\n";
         for(Polje[] vrstica : plosca){
             for(Polje p : vrstica){
                 if (p == Polje.B)ans+=" B ";
