@@ -1,4 +1,4 @@
-//package logika;
+package logika;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -40,19 +40,19 @@ public class Igra {
     /**
      * @return seznam vseh možnih potez v tem tenutku poteza je tipa koordinata
      */
-    public List<Koordinati> moznePoteze() {
+    public List<splosno.Koordinati> moznePoteze() {
         // urh
         // Vrne seznam vseh možnih potez v tem tenutku
         // poteza je tipa koordinata
-        List<Koordinati> poteze = new ArrayList<Koordinati>();
+        List<splosno.Koordinati> poteze = new ArrayList<splosno.Koordinati>();
         for (int i = 0; i < visina; i++)
             for (int j = 0; j < sirina; j++)
                 if (plosca[i][j] == Polje.PRAZNO)
-                    poteze.add(new Koordinati(i, j));
+                    poteze.add(new splosno.Koordinati(i, j));
         return poteze;
     }
 
-    boolean petVVrsto(Smer smer, Igralec igralec, Koordinati zacetek) {
+    boolean petVVrsto(Smer smer, Igralec igralec, splosno.Koordinati zacetek) {
         // urh
         // True, če je v dani smeri z zacetokv zacetek igralec dosegel točno 5
         // zaporednih
@@ -83,15 +83,15 @@ public class Igra {
 
         // vsi stolpci
         for (int x = 0; x < sirina; x++)
-            if (petVVrsto(Smer.dol(), naPotezi, new Koordinati(x, 0)))
+            if (petVVrsto(Smer.dol(), naPotezi, new splosno.Koordinati(x, 0)))
                 return naPotezi.zmaga();
         // vrstice
         for (int y = 0; y < sirina; y++)
-            if (petVVrsto(Smer.desno(), naPotezi, new Koordinati(0, y)))
+            if (petVVrsto(Smer.desno(), naPotezi, new splosno.Koordinati(0, y)))
                 return naPotezi.zmaga();
         // diagonale
         for (int y = 0; y < visina; y++)
-            if (petVVrsto(Smer.desnoDol(), naPotezi, new Koordinati(0, y)))
+            if (petVVrsto(Smer.desnoDol(), naPotezi, new splosno.Koordinati(0, y)))
                 return naPotezi.zmaga();
 
         // od tukaj dlje vemo, da nihče ni zmagal
@@ -102,7 +102,7 @@ public class Igra {
         return Stanje.NEODLOCENO;
     }
 
-    public boolean odigraj(Koordinati p) {
+    public boolean odigraj(splosno.Koordinati p) {
         int x = p.getX();
         int y = p.getY();
         if (plosca[x][y] == Polje.PRAZNO) {

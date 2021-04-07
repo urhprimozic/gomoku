@@ -1,3 +1,6 @@
+package logika;
+// To bi lahko zamenjali s koordinato..
+/// TODO
 /*
 namesto tuplov (0,1), (1,0), (1,1)
 */

@@ -1,3 +1,5 @@
+package logika;
+
 public enum Igralec {
 	C, B;
 
