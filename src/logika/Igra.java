@@ -82,19 +82,18 @@ public class Igra {
         int y = zacetek.getY();
         int stevec = 0; // število zaporednih žetonov igralca
         while (x < sirina && y < visina && 0 <= x && 0 <= y) {
-            if (plosca[x][y] == igralec.getPolje())
+        	stevec = 0;
+            if (plosca[x][y] == igralec.getPolje()) {
                 stevec++;
-            // tok se je prekinil
-            else {
-                if (stevec == 5)
-                    return true;
-                stevec = 0;
+            }
+            if (stevec == 5) {
+            	return true;
             }
             // premik naprej
             x += smer.x;
             y += smer.y;
         }
-        return false;
+        return (stevec == 5);
     }
 
     public Stanje dobiNovoStanje() {
@@ -104,24 +103,35 @@ public class Igra {
         // TODO optimizacija: potrebuje preverit samo presečišča z zadnjo potezo
 
         // vsi stolpci
-        for (int x = 0; x < sirina; x++)
-            if (petVVrsto(Smer.DOL, naPotezi, new splosno.Koordinati(x, 0)))
+        for (int x = 0; x < sirina; x++) {
+            if (petVVrsto(Smer.DOL, naPotezi, new splosno.Koordinati(x, 0))) {
                 return naPotezi.zmaga();
+            }
+        }
         // vrstice
-        for (int y = 0; y < sirina; y++)
-            if (petVVrsto(Smer.DESNO, naPotezi, new splosno.Koordinati(0, y)))
+        for (int y = 0; y < sirina; y++) {
+            if (petVVrsto(Smer.DESNO, naPotezi, new splosno.Koordinati(0, y))) {
                 return naPotezi.zmaga();
+            }
+        }
         // diagonale
-        for (int y = 0; y < visina; y++)
-            if (petVVrsto(Smer.DESNO_DOL, naPotezi, new splosno.Koordinati(0, y)))
+        for (int y = 0; y < visina; y++) {
+            if (petVVrsto(Smer.DESNO_DOL, naPotezi, new splosno.Koordinati(0, y))) {
                 return naPotezi.zmaga();
-            else if(petVVrsto(Smer.DESNO_GOR, naPotezi, new splosno.Koordinati(0, y))) return naPotezi.zmaga();
+            }
+            else if(petVVrsto(Smer.DESNO_GOR, naPotezi, new splosno.Koordinati(0, y))) {
+            	return naPotezi.zmaga();
+            }
+        }
 
         // od tukaj dlje vemo, da nihče ni zmagal
-        for (Polje[] vrstica : plosca)
-            for (Polje polje : vrstica)
-                if (polje == Polje.PRAZNO)
+        for (Polje[] vrstica : plosca) {
+            for (Polje polje : vrstica) {
+                if (polje == Polje.PRAZNO) {
                     return Stanje.V_TEKU;
+                }
+            }
+        }
         return Stanje.NEODLOCENO;
     }
 
