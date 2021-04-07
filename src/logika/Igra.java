@@ -92,17 +92,17 @@ public class Igra {
 
         // vsi stolpci
         for (int x = 0; x < sirina; x++)
-            if (petVVrsto(Smer.dol(), naPotezi, new splosno.Koordinati(x, 0)))
+            if (petVVrsto(Smer.DOL, naPotezi, new splosno.Koordinati(x, 0)))
                 return naPotezi.zmaga();
         // vrstice
         for (int y = 0; y < sirina; y++)
-            if (petVVrsto(Smer.desno(), naPotezi, new splosno.Koordinati(0, y)))
+            if (petVVrsto(Smer.DESNO, naPotezi, new splosno.Koordinati(0, y)))
                 return naPotezi.zmaga();
         // diagonale
         for (int y = 0; y < visina; y++)
-            if (petVVrsto(Smer.desnoDol(), naPotezi, new splosno.Koordinati(0, y)))
+            if (petVVrsto(Smer.DESNO_DOL, naPotezi, new splosno.Koordinati(0, y)))
                 return naPotezi.zmaga();
-            else if(petVVrsto(Smer.desnoGor(), naPotezi, new splosno.Koordinati(0, y))) return naPotezi.zmaga();
+            else if(petVVrsto(Smer.DESNO_GOR, naPotezi, new splosno.Koordinati(0, y))) return naPotezi.zmaga();
 
         // od tukaj dlje vemo, da nihče ni zmagal
         for (Polje[] vrstica : plosca)
