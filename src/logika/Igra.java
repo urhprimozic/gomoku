@@ -102,6 +102,7 @@ public class Igra {
         for (int y = 0; y < visina; y++)
             if (petVVrsto(Smer.desnoDol(), naPotezi, new splosno.Koordinati(0, y)))
                 return naPotezi.zmaga();
+            else if(petVVrsto(Smer.desnoGor(), naPotezi, new splosno.Koordinati(0, y))) return naPotezi.zmaga();
 
         // od tukaj dlje vemo, da nihče ni zmagal
         for (Polje[] vrstica : plosca)

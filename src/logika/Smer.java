@@ -23,4 +23,7 @@ public class Smer {
     static Smer desnoDol(){
         return new Smer(1, 1);
     }
+    static Smer desnoGor(){
+        return new Smer(1, -1);
+    }
 }
