@@ -19,6 +19,9 @@ public class Igra {
 
     // odigrane poteze
     public Deque<Poteza> odigranePoteze;
+    
+    // stanje igre
+    public Stanje trenutnoStanje;
 
     /**
      * Nova igra, v začetni poziciji je prazna in na potezi je O.
@@ -94,7 +97,7 @@ public class Igra {
         return false;
     }
 
-    public Stanje stanje() {
+    public Stanje dobiNovoStanje() {
         /* Vrne stanje igre */
 
         // Najprej preveri, če je trenutni igralec zmagal
@@ -128,6 +131,8 @@ public class Igra {
         if (plosca[x][y] == Polje.PRAZNO) {
             plosca[x][y] = naPotezi.getPolje();
             odigranePoteze.add(new Poteza(x, y, naPotezi));
+            
+            trenutnoStanje = dobiNovoStanje();
 
             naPotezi = naPotezi.nasprotnik();
             return true;

@@ -22,11 +22,11 @@ public class Gomoku {
             	System.out.println(igra);
             	
             	System.out.print(i + " ");
-            	System.out.println(igra.stanje());
+            	System.out.println(igra.trenutnoStanje);
             	splosno.Koordinati zadnja = igra.odigranePoteze.getLast().getKoordinati();
             	System.out.println("(" + zadnja.getX() + ", " + zadnja.getY() + ") " + igra.naPotezi.nasprotnik());
             	System.out.println("---------------------------------------------");
-            	if (igra.stanje() != Stanje.V_TEKU) {
+            	if (igra.trenutnoStanje != Stanje.V_TEKU) {
             		System.out.println("Ponovi igro? [D/N]");
             		String s = in.nextLine();
             		
