@@ -11,7 +11,7 @@ public class Gomoku {
     	Scanner in = new Scanner(System.in);
     	game_loop:
         while (true) {
-        	Igra igra = new Igra(7, 7);
+        	Igra igra = new Igra(7,10);
         	
         	int i = 0;
         	

@@ -82,7 +82,7 @@ public class Igra {
         int y = zacetek.getY();
         int stevec = 0; // število zaporednih žetonov igralca
         while (x < sirina && y < visina && 0 <= x && 0 <= y) {
-            if (plosca[x][y] == igralec.getPolje()) {
+            if (plosca[y][x] == igralec.getPolje()) {
                 stevec++;
             }
             else {
