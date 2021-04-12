@@ -1,4 +1,4 @@
-# gomoku
+# Gomoku
 Igra Gomoku s primitivno umetno inteligenco. Projekt pri Programiranju 2 na FMF.
 
 
