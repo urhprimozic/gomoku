@@ -110,50 +110,52 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// if (e.getSource() == igraClovekRacunalnik) {
-		// 	Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
-		// 	Vodja.vrstaIgralca.put(Igralec.O, VrstaIgralca.C); 
-		// 	Vodja.vrstaIgralca.put(Igralec.X, VrstaIgralca.R);
-		// 	Vodja.igramoNovoIgro();
-		// } else if (e.getSource() == igraRacunalnikClovek) {
-		// 	Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
-		// 	Vodja.vrstaIgralca.put(Igralec.O, VrstaIgralca.R); 
-		// 	Vodja.vrstaIgralca.put(Igralec.X, VrstaIgralca.C);
-		// 	Vodja.igramoNovoIgro();
-		// } else if (e.getSource() == igraClovekClovek) {
-		// 	Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
-		// 	Vodja.vrstaIgralca.put(Igralec.O, VrstaIgralca.C); 
-		// 	Vodja.vrstaIgralca.put(Igralec.X, VrstaIgralca.C);
-		// 	Vodja.igramoNovoIgro();
-		// } else if (e.getSource() == igraRacunalnikRacunalnik) {
-		// 	Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
-		// 	Vodja.vrstaIgralca.put(Igralec.O, VrstaIgralca.R); 
-		// 	Vodja.vrstaIgralca.put(Igralec.X, VrstaIgralca.R);
-		// 	Vodja.igramoNovoIgro();
-		// }
+		if (e.getSource() == igraClovekRacunalnik) {
+			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
+			Vodja.vrstaIgralca.put(Igralec.C, VrstaIgralca.C); 
+			Vodja.vrstaIgralca.put(Igralec.B, VrstaIgralca.R);
+			Vodja.igramoNovoIgro();
+		} else if (e.getSource() == igraRacunalnikClovek) {
+			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
+			Vodja.vrstaIgralca.put(Igralec.C, VrstaIgralca.R); 
+			Vodja.vrstaIgralca.put(Igralec.B, VrstaIgralca.C);
+			Vodja.igramoNovoIgro();
+		} else if (e.getSource() == igraClovekClovek) {
+			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
+			Vodja.vrstaIgralca.put(Igralec.C, VrstaIgralca.C); 
+			Vodja.vrstaIgralca.put(Igralec.B, VrstaIgralca.C);
+			Vodja.igramoNovoIgro();
+		} else if (e.getSource() == igraRacunalnikRacunalnik) {
+			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
+			Vodja.vrstaIgralca.put(Igralec.C, VrstaIgralca.R); 
+			Vodja.vrstaIgralca.put(Igralec.B, VrstaIgralca.R);
+			Vodja.igramoNovoIgro();
+		}
 	}
 
 	public void osveziGUI() {
-		// if (Vodja.igra == null) {
-		// 	status.setText("Igra ni v teku.");
-		// }
-		// else {
-		// 	switch(Vodja.igra.stanje()) {
-		// 	case NEODLOCENO: status.setText("Neodločeno!"); break;
-		// 	case V_TEKU: 
-		// 		status.setText("Na potezi je " + Vodja.igra.naPotezi + 
-		// 				" - " + Vodja.vrstaIgralca.get(Vodja.igra.naPotezi)); 
-		// 		break;
-		// 	case ZMAGA_O: 
-		// 		status.setText("Zmagal je O - " + 
-		// 				Vodja.vrstaIgralca.get(Igralec.O));
-		// 		break;
-		// 	case ZMAGA_X: 
-		// 		status.setText("Zmagal je X - " + 
-		// 				Vodja.vrstaIgralca.get(Igralec.X));
-		// 		break;
-		// 	}
-		// }
+		 if (Vodja.igra == null) {
+		 	status.setText("Igra ni v teku.");
+		 }
+		 else {
+		 	switch(Vodja.igra.dobiNovoStanje()) {
+		 	case NEODLOCENO: status.setText("Neodločeno!"); break;
+		 	case V_TEKU: 
+				String ime = "bel";
+				if (Vodja.igra.naPotezi == Igralec.C) ime = "črn";
+		 		status.setText("Na potezi je " + ime + 
+		 				" - " + Vodja.vrstaIgralca.get(Vodja.igra.naPotezi)); 
+		 		break;
+		 	case ZMAGA_C: 
+		 		status.setText("Zmagal je črn - " + 
+		 				Vodja.vrstaIgralca.get(Igralec.C));
+		 		break;
+		 	case ZMAGA_B: 
+		 		status.setText("Zmagal je bel. Rasist. - " + 
+		 				Vodja.vrstaIgralca.get(Igralec.B));
+		 		break;
+		 	}
+		 }
 		polje.repaint();
 	}
 	

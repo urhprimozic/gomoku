@@ -50,37 +50,29 @@ public class Vodja {
 	
 	private static Random random = new Random ();
 	
-	public static void igrajRacunalnikovoPotezo() {
-		List<Koordinati> moznePoteze = igra.moznePoteze();
-		try {TimeUnit.SECONDS.sleep(1);} catch (Exception e) {};
-		int randomIndex = random.nextInt(moznePoteze.size());
-		Koordinati poteza = moznePoteze.get(randomIndex);
-		igra.odigraj(poteza);
-		igramo ();
-	}
 	
-	//public static void igrajRacunalnikovoPotezo() {
-	//	Igra zacetkaIgra = igra;
-		// SwingWorker<Koordinati, Void> worker = new SwingWorker<Koordinati, Void> () {
-		// 	@Override
-		// 	protected Koordinati doInBackground() {
-		// 		try {TimeUnit.SECONDS.sleep(2);} catch (Exception e) {};
-		// 		List<Koordinati> moznePoteze = igra.poteze();
-		// 		int randomIndex = random.nextInt(moznePoteze.size());
-		// 		return moznePoteze.get(randomIndex);
-		// 	}
-		// 	@Override
-		// 	protected void done () {
-		// 		Koordinati poteza = null;
-		// 		try {poteza = get();} catch (Exception e) {};
-		// 		if (igra == zacetkaIgra) {
-		// 			igra.odigraj(poteza);
-		// 			igramo ();
-		// 		}
-		// 	}
-		// };
-		// worker.execute();
-	//}
+	public static void igrajRacunalnikovoPotezo() {
+		Igra zacetkaIgra = igra;
+		SwingWorker<Koordinati, Void> worker = new SwingWorker<Koordinati, Void> () {
+			@Override
+			protected Koordinati doInBackground() {
+				try {TimeUnit.SECONDS.sleep(1);} catch (Exception e) {};
+				List<Koordinati> moznePoteze = igra.moznePoteze();
+				int randomIndex = random.nextInt(moznePoteze.size());
+				return moznePoteze.get(randomIndex);
+			}
+			@Override
+			protected void done () {
+				Koordinati poteza = null;
+				try {poteza = get();} catch (Exception e) {};
+				if (igra == zacetkaIgra) {
+					igra.odigraj(poteza);
+					igramo ();
+				}
+			}
+		};
+		worker.execute();
+	}
 		
 	public static void igrajClovekovoPotezo(Koordinati poteza) {
 		if (igra.odigraj(poteza)) clovekNaVrsti = false;

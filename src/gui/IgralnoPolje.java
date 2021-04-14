@@ -31,7 +31,7 @@ public class IgralnoPolje extends JPanel implements MouseListener {
 	private Color barvaB;
 
 	public IgralnoPolje() {
-		setBackground(Color.WHITE);
+		setBackground(Color.LIGHT_GRAY);
 		this.addMouseListener(this);
 		barvaCrte = Color.BLACK;
 		barvaC = Color.BLACK;
@@ -41,8 +41,10 @@ public class IgralnoPolje extends JPanel implements MouseListener {
 	// Širina enega kvadratka
 	private double squareWidth() {
 		Igra igra = Vodja.igra;
-		if (igra == null)
+		if (igra == null) {
+			System.out.println("WARNING: squareWidth() called on igra=null");
 			return 0.0;
+		}
 		return Math.min(getWidth() / igra.sirina, getHeight() / igra.visina);
 	}
 
@@ -52,42 +54,7 @@ public class IgralnoPolje extends JPanel implements MouseListener {
 	}
 
 	// Relativni prostor okoli X in O
-	private final static double PADDING = 0.18;
-
-	/**
-	 * V grafični kontekst g2 nariši križec v polje (i,j)
-	 * 
-	 * @param g2
-	 * @param i
-	 * @param j
-	 */
-	private void paintX(Graphics2D g2, int i, int j) {
-		double w = squareWidth();
-		double r = w * (1.0 - SIRINA_CRTE - 2.0 * PADDING); // sirina X
-		double x = w * (i + 0.5 * SIRINA_CRTE + PADDING);
-		double y = w * (j + 0.5 * SIRINA_CRTE + PADDING);
-		g2.setColor(Color.BLUE);
-		g2.setStroke(new BasicStroke((float) (w * SIRINA_CRTE)));
-		g2.drawLine((int) x, (int) y, (int) (x + r), (int) (y + r));
-		g2.drawLine((int) (x + r), (int) y, (int) x, (int) (y + r));
-	}
-
-	/**
-	 * V grafični kontekst {@g2} nariši križec v polje {@(i,j)}
-	 * 
-	 * @param g2
-	 * @param i
-	 * @param j
-	 */
-	private void paintO(Graphics2D g2, int i, int j) {
-		double w = squareWidth();
-		double d = w * (1.0 - SIRINA_CRTE - 2.0 * PADDING); // premer O
-		double x = w * (i + 0.5 * SIRINA_CRTE + PADDING);
-		double y = w * (j + 0.5 * SIRINA_CRTE + PADDING);
-		g2.setColor(Color.RED);
-		g2.setStroke(new BasicStroke((float) (w * SIRINA_CRTE)));
-		g2.drawOval((int) x, (int) y, (int) d, (int) d);
-	}
+	// private final static double PADDING = 0.18;
 
 	@Override
 	protected void paintComponent(Graphics g) {
@@ -109,18 +76,19 @@ public class IgralnoPolje extends JPanel implements MouseListener {
 						g2.setColor(barvaC);
 					if (p == Polje.B)
 						g2.setColor(barvaB);
-					g2.drawOval((int) (stolpec * w + (VELIKOST_ZETONA / 2)), (int)(vrstica * w + (VELIKOST_ZETONA / 2)),
-							(int)(w * VELIKOST_ZETONA),(int) (w * VELIKOST_ZETONA));
+					g2.fillOval((int) (stolpec * w + w*(1-VELIKOST_ZETONA)/2 + (SIRINA_CRTE )),
+							(int) (vrstica * w + w*(1-VELIKOST_ZETONA)/2 + (SIRINA_CRTE )),
+							(int) (w * VELIKOST_ZETONA), (int) (w * VELIKOST_ZETONA));
 				}
 			}
 
 			// mreža
 			g2.setColor(barvaCrte);
-			for (int vrstica = 0; vrstica < igra.visina; vrstica++) {
-				g2.drawLine(0, vrstica * (int) w, igra.sirina, vrstica * (int) w);
+			for (int vrstica = 1; vrstica < igra.visina; vrstica++) {
+				g2.drawLine(0, vrstica * (int) w, igra.sirina * (int) w, vrstica * (int) w);
 			}
-			for (int stolpec = 0; stolpec < igra.sirina; stolpec++) {
-				g2.drawLine(stolpec * (int) w, 0, stolpec * (int) w, igra.visina);
+			for (int stolpec = 1; stolpec < igra.sirina; stolpec++) {
+				g2.drawLine(stolpec * (int) w, 0, stolpec * (int) w, igra.visina * (int) w);
 			}
 		}
 
@@ -128,7 +96,24 @@ public class IgralnoPolje extends JPanel implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-
+		Igra igra = Vodja.igra; 
+		if(igra != null){
+			if (Vodja.clovekNaVrsti) {
+				int x = e.getX();
+				int y = e.getY();
+				int w = (int)(squareWidth());
+				int i = x / w ;
+				double di = (x % w) / squareWidth() ;
+				int j = y / w ;
+				double dj = (y % w) / squareWidth() ;
+				if (0 <= i && i < igra.sirina &&
+						0.5 * SIRINA_CRTE < di && di < 1.0 - 0.5 * SIRINA_CRTE &&
+						0 <= j && j < igra.visina && 
+						0.5 * SIRINA_CRTE < dj && dj < 1.0 - 0.5 * SIRINA_CRTE) {
+					Vodja.igrajClovekovoPotezo (new Koordinati(j, i));
+				}
+			}
+		}
 	}
 
 	@Override
