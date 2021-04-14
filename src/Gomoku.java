@@ -1,13 +1,17 @@
 import logika.Igra;
 import logika.Stanje;
+import vodja.Vodja;
 
 import java.util.Scanner;
+
+import gui.GlavnoOkno;
 
 //Game loop in to
 
 public class Gomoku {
-    public static void main(String[] args) {
-    	
+
+	protected void tekstovniVmesnik(){
+		   	
     	Scanner in = new Scanner(System.in);
     	game_loop:
         while (true) {
@@ -40,6 +44,11 @@ public class Gomoku {
         	}       	
         }
         in.close();
-                
+	}
+    public static void main(String[] args) {
+		GlavnoOkno glavno_okno = new GlavnoOkno();
+		glavno_okno.pack();
+		glavno_okno.setVisible(true);
+		Vodja.okno = glavno_okno;           
     }
 }
