@@ -41,6 +41,7 @@ public class Igra {
         naPotezi = Igralec.C;
         this.sirina = sirina;
         this.visina = visina;
+        trenutnoStanje = Stanje.V_TEKU;
         odigranePoteze = new LinkedList<Poteza>();
     }
     
@@ -98,7 +99,7 @@ public class Igra {
         return (stevec >= 5);
     }
 
-    public Stanje dobiNovoStanje() {
+    private Stanje izracunajNovoStanje() {
         /* Vrne stanje igre */
 
         // Najprej preveri, če je trenutni igralec zmagal
@@ -144,7 +145,7 @@ public class Igra {
             plosca[x][y] = naPotezi.getPolje();
             odigranePoteze.add(new Poteza(x, y, naPotezi));
             
-            trenutnoStanje = dobiNovoStanje();
+            trenutnoStanje = izracunajNovoStanje();
 
             naPotezi = naPotezi.nasprotnik();
             return true;

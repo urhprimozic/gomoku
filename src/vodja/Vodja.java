@@ -29,10 +29,14 @@ public class Vodja {
 	
 	public static void igramo () {
 		okno.osveziGUI();
-		switch (igra.dobiNovoStanje()) {
+		if (!igra.odigranePoteze.isEmpty()) {
+			System.out.print(igra.odigranePoteze.getLast().getKoordinati());
+			System.out.println(" " + igra.trenutnoStanje);
+		}
+		switch (igra.trenutnoStanje) {
 		case ZMAGA_B: 
 		case ZMAGA_C: 
-		case NEODLOCENO: 
+		case NEODLOCENO:
 			return; // odhajamo iz metode igramo
 		case V_TEKU: 
 			Igralec igralec = igra.naPotezi;
