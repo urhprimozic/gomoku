@@ -87,16 +87,25 @@ public class Igra {
                 stevec++;
             }
             else {
+                //na tem kvadratu ni več pravega žetona
+                // če jih je blo prej 5, je zmagal
+                if(stevec == 5){
+                    return true;
+                }
             	stevec = 0;
             }
-            if (stevec >= 5) {
-            	return true;
-            }
+            // če je tčn o 5 žetonov, je to točka
+            // če jih je paveč kot 5 , pa ne
+            
+            //if (stevec == 5) {
+            //	return true;
+            //}
+  
             // premik naprej
             x += smer.x;
             y += smer.y;
         }
-        return (stevec >= 5);
+        return (stevec == 5);
     }
 
     private Stanje izracunajNovoStanje() {
@@ -117,13 +126,22 @@ public class Igra {
                 return naPotezi.zmaga();
             }
         }
-        // diagonale
+        // diagonale pod glavno diagonalo
         for (int y = 0; y < visina; y++) {
             if (petVVrsto(Smer.DESNO_DOL, naPotezi, new splosno.Koordinati(0, y))) {
                 return naPotezi.zmaga();
             }
             else if(petVVrsto(Smer.DESNO_GOR, naPotezi, new splosno.Koordinati(0, y))) {
             	return naPotezi.zmaga();
+            }
+        }
+        // diagonale nad glavno
+        for (int x = 1; x < visina; x++) {
+            if (petVVrsto(Smer.DESNO_DOL, naPotezi, new splosno.Koordinati(x, 0))) {
+                return naPotezi.zmaga();
+            }
+            else if(petVVrsto(Smer.DESNO_GOR, naPotezi, new splosno.Koordinati(x, 0))) {
+                return naPotezi.zmaga();
             }
         }
 
