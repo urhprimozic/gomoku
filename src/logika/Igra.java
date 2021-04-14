@@ -11,7 +11,7 @@ public class Igra {
     public int sirina, visina;
 
     // Igralno polje
-    private Polje[][] plosca;
+    public Polje[][] plosca;
 
     // Igralec, ki je trenutno na potezi.
     // Vrednost je poljubna, če je igre konec (se pravi, lahko je napačna).

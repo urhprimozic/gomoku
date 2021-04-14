@@ -47,15 +47,17 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 	 */
 	public GlavnoOkno() {
 		
-		this.setTitle("Tic tac toe");
+		this.setTitle("Gomoku");
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setLayout(new GridBagLayout());
 	
 		// menu
 		JMenuBar menu_bar = new JMenuBar();
 		this.setJMenuBar(menu_bar);
-		JMenu igra_menu = new JMenu("Nova igra");
+		// Nova igra
+		JMenu igra_menu = new JMenu("Nova igra TODO");
 		menu_bar.add(igra_menu);
+
 
 		igraClovekRacunalnik = new JMenuItem("Človek – računalnik");
 		igra_menu.add(igraClovekRacunalnik);
@@ -72,6 +74,12 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 		igraRacunalnikRacunalnik = new JMenuItem("Računalnik – računalnik");
 		igra_menu.add(igraRacunalnikRacunalnik);
 		igraRacunalnikRacunalnik.addActionListener(this);
+
+		//nastavitve
+		JMenu nastavitve_menu = new JMenu("Nastavitve-TODO");
+		menu_bar.add(nastavitve_menu);
+
+		
 
 		// igralno polje
 		polje = new IgralnoPolje();
