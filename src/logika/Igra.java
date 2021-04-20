@@ -30,6 +30,18 @@ public class Igra {
     	this(15, 15);
     }
     
+    public Igra(Igra osnovnica){
+        this.sirina = osnovnica.sirina;
+        this.visina = osnovnica.visina;
+        this.plosca = new Polje[visina][sirina];
+        for(int v = 0; v < visina; v++){
+            for(int s = 0; s < sirina; s++){
+                this.plosca[v][s] = osnovnica.plosca[v][s];
+            }
+        }
+        this.naPotezi = osnovnica.naPotezi;
+    }
+
     public Igra(int visina, int sirina) {
         plosca = new Polje[visina][sirina];
         for (int i = 0; i < visina; i++) {
@@ -108,7 +120,7 @@ public class Igra {
         return (stevec == 5);
     }
 
-    private Stanje izracunajNovoStanje() {
+    public Stanje izracunajNovoStanje() {
         /* Vrne stanje igre */
 
         // Najprej preveri, če je trenutni igralec zmagal
