@@ -7,3 +7,10 @@ _Gomoku game with simple AI. Project for programming 2  on FMF._
 ## Avtorja
 - [Jon Mikoš](https://github.com/MikosJon)
 - [Urh Primožič](https://github.com/urhprimozic/)
+
+## Umenta inteligenca
+
+Uporabljava Monte Cralo Search Tree z nevronsko mrežo za hervistiko. 
+
+### Učenje
+Python, ai-gym.
