@@ -2,13 +2,13 @@ from logika import Igra, Stanje
 from vodja import Vodja
 
 
+def log(self, str, out=None):
+    if out is None:
+        print(str)
+    else:
+        with open(out, 'a') as f:
+            f.write(str)
 class Gomoku():
-    def log(self, str, out=None):
-        if out is None:
-            print(str)
-        else:
-            with open(out, 'a') as f:
-                f.write(str)
 
     def igraj(self, logging=2, out=None):
         '''
@@ -27,10 +27,8 @@ class Gomoku():
             filename od datoteke za logging 
             (None za standardni output)
         '''
-        vodja = Vodja()
-        vodja.igramo_novo_igro(logging=logging, out=out)
-        while vodja.igramo() != 0:
-            self.log("Igramo")
+        # brez vodje
+        self.igra = Igra()
 
-g = Gomoku()
-g.igraj()
+        if logging > 0:
+            log("New game created")
