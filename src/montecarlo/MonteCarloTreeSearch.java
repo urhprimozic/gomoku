@@ -9,15 +9,16 @@ import splosno.Koordinati;
 public class MonteCarloTreeSearch {
 	static final int WIN_SCORE = 1;
 	public int level;
-	
-	public Koordinati findNextMove(Igra board) {		
+
+	public Koordinati findNextMove(Igra board) {
 		long end = System.currentTimeMillis() + 5000;
-				
+
 		Tree tree = new Tree();
 		Node root = tree.root;
-		
+
 		root.state = new State(board);
-		
+
+
 		int i = 0;
 		while (System.currentTimeMillis() < end) {
 			Node promisingNode = selectPromisingNode(root);
@@ -30,11 +31,11 @@ public class MonteCarloTreeSearch {
 			}
 			Stanje playoutResult = simulatePlayout(nodeToExplore);
 			backPropagation(nodeToExplore, playoutResult);
-			
+
 			i++;
 		}
 		System.out.println(i);
-				
+
 		Node winnerNode = root.bestChild();
 		tree.root = winnerNode;
 		return winnerNode.state.board.odigranePoteze.getLast().getKoordinati();
@@ -67,7 +68,7 @@ public class MonteCarloTreeSearch {
 			return status;
 		}
 		while (status == Stanje.V_TEKU) {
-			/*
+
 			for (Koordinati p : tempState.board.moznePoteze()) {
 				tempState.board.odigraj(p);
 				if (tempState.board.trenutnoStanje != Stanje.V_TEKU) {
@@ -77,7 +78,7 @@ public class MonteCarloTreeSearch {
 					tempState.board.razveljaviZadnjo();
 				}
 			}
-			*/
+
 			tempState.randomPlay();
 			status = tempState.board.trenutnoStanje;
 		}
