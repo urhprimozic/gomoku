@@ -1,4 +1,5 @@
 import enum
+import random
 
 
 class Polje(enum.Enum):
@@ -90,3 +91,71 @@ class Igra():
             vrstica += smer[0]
             stolpec += smer[1]
         return stevec == 5
+
+    def izracunaj_novo_stanje(self):
+        '''Vrne stanje igre '''
+        # TODO optimizacija (preveri le presečišče z zadnjo potezo)
+
+        #(vrstca, stolpec)
+        DOL = (1, 0)
+        DESNO = (0, 1)
+        DESNO_DOL = (1, 1)
+        DESNO_GOR = (-1, 1)
+
+        # stolpci
+        for stolpec in range(self.sirina):
+            if self.pet_v_vrsto(DOL, self.naPotezi, (0, stolpec)):
+                return self.naPotezi.zmaga()
+
+        # vrstice
+        for vrstica in range(self.visina):
+            if self.pet_v_vrsto(DESNO, self.naPotezi, (vrstica, 0)):
+                return self.naPotezi.zmaga()
+
+        # diagonale pod glavno diagonalo
+        for vrstica in range(self.visina):
+            if self.pet_v_vrsto(DESNO_DOL, self.naPotezi, (vrstica, 0)):
+                return self.naPotezi.zmaga()
+            if self.pet_v_vrsto(DESNO_GOR, self.naPotezi, (vrstica, 0)):
+                return self.naPotezi.zmaga()
+
+        # diagonale nad glavno diagonalo
+        for stolpec in range(1, self.sirina):
+            if self.pet_v_vrsto(DESNO_DOL, self.naPotezi, (0, stolpec)):
+                return self.naPotezi.zmaga()
+            if self.pet_v_vrsto(DESNO_GOR, self.naPotezi, (0, stolpec)):
+                return self.naPotezi.zmaga()
+
+        # če smo tukaj, nihče ni zmagal
+        if len(self.mozne_poteze()) == 0:
+            # če ni več možnih potez, smo konc
+            return Stanje.NEODLOCENO
+
+        return Stanje.V_TEKU
+
+    def odigraj(self, p):
+        vrstica = p[0]
+        stolpec = p[1]
+
+        if self.plosca[vrstica][stolpec] == Polje.PRAZNO:
+            self.plosca[vrstica][stolpec] = self.naPotezi.get_polje()
+            self.odigranePoteze.append((vrstica, stolpec, self.naPotezi))
+            # TODO: zakaj je to tukej?????
+            # stanje = self.izracunaj_novo_stanje()
+            self.naPotezi = self.naPotezi.nasprotnik()
+            return True
+        # če ne ni šlo
+        #raise Warning("Napačna poteza! Polje je že zasedeno")
+        print("WARNING!\n\tNapačna poteza! Polje je že zasedeno")
+        return False
+
+    def odigraf_nakljucno_potezo(self):
+        mozne = self.mozne_poteze()
+        if len(mozne) == 0:
+            print("WARNING: ni mogoče odigrati naključne poteze, ker ni možnih potez!")
+        poteza = random.choice(mozne)
+        if not self.odigraj(poteza):
+            print(
+                "ERROR - odigrajNakljucno je odigral ilegalno potezo.\n Napaka v moznePoteze()\n ali odigraj()")
+
+    # TODO a rabmo še razveljavi zadnjo??
