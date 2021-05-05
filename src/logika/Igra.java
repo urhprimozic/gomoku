@@ -156,7 +156,7 @@ public class Igra {
             }
         }
         // diagonale nad glavno
-        for (int x = 1; x < visina; x++) {
+        for (int x = 1; x < sirina; x++) {
             if (petVVrsto(Smer.DESNO_DOL, naPotezi, new splosno.Koordinati(x, 0))) {
                 return naPotezi.zmaga();
             }
