@@ -3,6 +3,9 @@ package logika;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import splosno.Koordinati;
+
 import java.util.Deque;
 
 public class Igra {
@@ -27,7 +30,7 @@ public class Igra {
      * Nova igra, v začetni poziciji je prazna in na potezi je O.
      */
     public Igra() {
-    	this(15, 15);
+    	this(15,15);
     }
     
     public Igra(Igra osnovnica){
@@ -39,7 +42,12 @@ public class Igra {
                 this.plosca[v][s] = osnovnica.plosca[v][s];
             }
         }
+        this.trenutnoStanje = osnovnica.trenutnoStanje;
         this.naPotezi = osnovnica.naPotezi;
+        odigranePoteze = new LinkedList<Poteza>();
+        for (Poteza p: osnovnica.odigranePoteze) {
+        	odigranePoteze.add(p);
+        }
     }
 
     public Igra(int visina, int sirina) {
@@ -195,7 +203,13 @@ public class Igra {
 
     public void razveljaviZadnjo() {
         if (odigranePoteze != null) {
-            odigranePoteze.removeLast();
+            Poteza zadnja = odigranePoteze.getLast();
+            Koordinati p = zadnja.getKoordinati();
+            Igralec c = zadnja.getIgralec();
+            
+            plosca[p.getX()][p.getY()] = Polje.PRAZNO;
+            naPotezi = c;          
+            trenutnoStanje = izracunajNovoStanje();
         }
     }
 }
