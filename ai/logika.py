@@ -140,8 +140,8 @@ class Igra():
         if self.plosca[vrstica][stolpec] == Polje.PRAZNO:
             self.plosca[vrstica][stolpec] = self.naPotezi.get_polje()
             self.odigranePoteze.append((vrstica, stolpec, self.naPotezi))
-            # TODO: zakaj je to tukej?????
-            # stanje = self.izracunaj_novo_stanje()
+            
+            self.trenutnoStanje = self.izracunaj_novo_stanje()
             self.naPotezi = self.naPotezi.nasprotnik()
             return True
         # če ne ni šlo
