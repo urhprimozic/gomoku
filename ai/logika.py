@@ -54,13 +54,13 @@ class Igra():
             for p in vrstica:
                 if p == Polje.B:
                     ans += " B "
-                if p == Polje.C:
+                elif p == Polje.C:
                     ans += " C "
-                if p == Polje.PRAZNO:
+                elif p == Polje.PRAZNO:
                     ans += " . "
                 else:
                     raise TypeError(
-                        f"Buraz, polje[*][*] je tipa {str(type(p))}, mogu bi pa bit Polje")
+                        f"Buraz, polje[*][*] = {str(p)} je tipa {str(type(p))}, mogu bi pa bit Polje")
             ans += "\n"
         return ans
 

@@ -27,6 +27,7 @@ class Vodja():
     vrsta_igralca = {}
 
     def igramo(self, logging=2, out=None):
+        self.koncno_stanje = None
         if self.igra is None:
             raise Exception(f"igramo() klicano, vendar {self} nima igre")
         
@@ -34,13 +35,17 @@ class Vodja():
             if(logging >= 2):
                 log(str(self.igra.odigranePoteze[-1]
                         ) + str(self.igra.trenutnoStanje))
-        if logging > 2:
+        if logging >= 2:
             log(self.igra.__str__())
+
         if self.igra.trenutnoStanje == Stanje.ZMAGA_C or self.igra.trenutnoStanje == Stanje.ZMAGA_B or self.igra.trenutnoStanje == Stanje.NEODLOCENO:
+            self.koncno_stanje = self.igra.trenutnoStanje
             return 0
         # drugače je pa še v teku
         igralec = self.igra.naPotezi
         vrstaNaPotezi = self.vrsta_igralca.get(igralec)
+        if vrstaNaPotezi is None:
+            raise Exception("vrstaNaPotezi is None! Ali si pozabil nastavit Vodja.vrsta_igralca = {...}?")
         if vrstaNaPotezi == VrstaIgralca.C:
             self.igrajClovekovoPotezo()
         else:
@@ -57,13 +62,10 @@ class Vodja():
         log("WARNING - igrajRacunalnikovoPotezo se ni pravilno implementirana in igra naključno!")
         self.igra.odigraf_nakljucno_potezo()
 
-    
-    def igrajRacunalnikovoPotezo(self):
-        pass
 
     def igramo_novo_igro(self, logging=2, out=None):
         self.igra = Igra()
-
+        self.koncno_stanje = None
         if logging > 0:
             log("New game created")
 

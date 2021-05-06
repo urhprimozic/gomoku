@@ -1,5 +1,5 @@
-from logika import Igra, Stanje
-from vodja import Vodja
+from logika import Igra, Stanje, Igralec
+from vodja import Vodja, VrstaIgralca
 
 
 def log(self, str, out=None):
@@ -8,11 +8,42 @@ def log(self, str, out=None):
     else:
         with open(out, 'a') as f:
             f.write(str)
+
+class RezultatiIgre():
+    '''
+    Razred, ki hrani informacije o rezultatu odigrane igre. Začne vedno ČRN (C)
+    '''
+    def __init__(self, stanje, st_potez):
+        '''
+        Parametri
+        ---------
+
+        stanje (Stanje) - stanje igre na koncu
+        st_potez - št potez v igri
+        '''
+        
+        self.stanje = stanje
+        self.zmaga_C = (stanje == Stanje.ZMAGA_C)
+        self.zmaga_B = (stanje == Stanje.ZMAGA_B)
+        self.dolzina_igre = st_potez
+    def __str__(self) -> str:
+        return f"Stanje igre: {self.stanje}. Dolžina: {self.dolzina_igre}"
+    def __iter__(self):
+        yield 'stanje', self.stanje
+        yield 'zmaga_C', self.zmaga_C
+        yield 'zmaga_B', self.zmaga_B 
+        yield 'dolzina', self.dolzina_igre
+    def tuple(self):
+        return (self.stanje, self.dolzina_igre)
+        
+
+
 class Gomoku():
 
-    def igraj(self, logging=2, out=None):
+    def odigraj_igro(self, vrsta_igralca_C=VrstaIgralca.C, vrsta_igralca_B=VrstaIgralca.R, logging=2, out=None):
         '''
-        Odigra igro.
+        Odigra igro med vrsto igralca 1 in 2.
+        TODO : verjetno je smiselno nardit objekt "možgani" namesto vrste igralca
 
         Parametri
         ---------
@@ -27,8 +58,15 @@ class Gomoku():
             filename od datoteke za logging 
             (None za standardni output)
         '''
-        # brez vodje
-        self.igra = Igra()
+        vodja = Vodja()
+        vodja.vrsta_igralca[Igralec.C] = vrsta_igralca_C
+        vodja.vrsta_igralca[Igralec.B] = vrsta_igralca_B
 
-        if logging > 0:
-            log("New game created")
+        vodja.igramo_novo_igro(logging=logging, out=out)
+        while vodja.igramo() != 0:
+            print("igramo")
+        return RezultatiIgre(vodja.koncno_stanje, len(vodja.igra.odigranePoteze))
+
+
+gomoku = Gomoku()
+print(gomoku.odigraj_igro())
