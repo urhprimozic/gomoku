@@ -20,9 +20,9 @@ public class Smer {
     }
 
     static {
-        DOL = new Smer (0, 1);
+        DOL = new Smer (1, 0);
         DESNO_DOL = new Smer(1, 1);
-        DESNO = new Smer(1, 0);
+        DESNO = new Smer(0, 1);
         DESNO_GOR = new Smer(1, -1);
     };
 }

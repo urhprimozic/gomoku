@@ -23,10 +23,6 @@ public class State {
 		winScore = 0;
 	}
 	
-	public double winRate() {
-		return winScore / (double) visitCount;
-	}
-	
 	public List<State> getAllPossibleStates() {
 		List<State> states = new LinkedList<State>();
 		for (Koordinati p : board.moznePoteze()) {
@@ -37,7 +33,10 @@ public class State {
 		return states;
 	}
 	
-	public void randomPlay() {
-		board.odigrajNakljucnoPotezo();
+	public void randomPlay(List<Koordinati> moves) {
+		int index = ((int) (Math.random() * moves.size()));
+		Koordinati p = moves.get(index);
+		board.odigraj(p);
+		moves.remove(index);
 	}
 }

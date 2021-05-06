@@ -18,11 +18,9 @@ public class MonteCarloTreeSearch {
 
 		root.state = new State(board);
 
-
-		int i = 0;
 		while (System.currentTimeMillis() < end) {
 			Node promisingNode = selectPromisingNode(root);
-			if (promisingNode.state.board.trenutnoStanje == Stanje.V_TEKU) {
+			if (promisingNode.state.board.izracunajNovoStanje() == Stanje.V_TEKU) {
 				expandNode(promisingNode);
 			}
 			Node nodeToExplore = promisingNode;
@@ -31,13 +29,12 @@ public class MonteCarloTreeSearch {
 			}
 			Stanje playoutResult = simulatePlayout(nodeToExplore);
 			backPropagation(nodeToExplore, playoutResult);
-
-			i++;
 		}
-		System.out.println(i);
 
+		System.out.println(root.state.visitCount);
+		
 		Node winnerNode = root.bestChild();
-		tree.root = winnerNode;
+		tree.root = winnerNode;		
 		return winnerNode.state.board.odigranePoteze.getLast().getKoordinati();
 	}
 
@@ -58,7 +55,7 @@ public class MonteCarloTreeSearch {
 	private Stanje simulatePlayout(Node node) {
 		Node tempNode = new Node(node);
 		State tempState = tempNode.state;
-		Stanje status = tempState.board.trenutnoStanje;
+		Stanje status = tempState.board.izracunajNovoStanje();
 		if (status == tempState.board.naPotezi.nasprotnik().zmaga()) {
 			node.state.winScore = Integer.MAX_VALUE / 2;
 			return status;
@@ -67,20 +64,12 @@ public class MonteCarloTreeSearch {
 			node.state.winScore = Integer.MIN_VALUE / 2;
 			return status;
 		}
+		
+		List<Koordinati> possibleMoves = tempState.board.moznePoteze();
+		
 		while (status == Stanje.V_TEKU) {
-
-			for (Koordinati p : tempState.board.moznePoteze()) {
-				tempState.board.odigraj(p);
-				if (tempState.board.trenutnoStanje != Stanje.V_TEKU) {
-					return tempState.board.trenutnoStanje;
-				}
-				else {
-					tempState.board.razveljaviZadnjo();
-				}
-			}
-
-			tempState.randomPlay();
-			status = tempState.board.trenutnoStanje;
+			tempState.randomPlay(possibleMoves);
+			status = tempState.board.izracunajNovoStanje();
 		}
 		return status;
 	}
