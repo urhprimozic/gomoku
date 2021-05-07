@@ -13,5 +13,5 @@ _Gomoku game with simple AI. Project for programming 2  on FMF._
 Uporabljava Monte Cralo Search Tree z nevronsko mrežo za hervistiko. 
 
 ### Učenje
-Python, ai-gym.
-Uporabila sva [tujo implementacijo igre Gomoku z AI gym-om](https://github.com/rockingdingo/gym-gomoku).
+Python
+Policy gradients (pytorch)
