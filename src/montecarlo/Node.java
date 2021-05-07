@@ -27,13 +27,12 @@ public class Node {
 	
 	public Node bestChild() {
 		Node best = childArray.get(0);
-		double bestWinRate = best.state.winRate();
+		double mostVisits = best.state.visitCount;
 		for (Node child : childArray) {
 			Koordinati p = child.state.board.odigranePoteze.getLast().getKoordinati();
-			System.out.println((p.getX() + 1) + "," +(p.getY() + 1) + " " + child.state.winRate());
-			if (child.state.winRate() >= bestWinRate) {
+			if (child.state.visitCount >= mostVisits) {
 				best = child;
-				bestWinRate = child.state.winRate();
+				mostVisits = child.state.visitCount;
 			}
 		}
 		return best;

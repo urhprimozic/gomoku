@@ -31,7 +31,7 @@ public class Vodja {
 	
 	public static void igramo () {
 		okno.osveziGUI();
-		switch (igra.trenutnoStanje) {
+		switch (igra.izracunajNovoStanje()) {
 		case ZMAGA_B: 
 		case ZMAGA_C: 
 		case NEODLOCENO:

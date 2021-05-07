@@ -29,11 +29,11 @@ public class Gomoku {
             	System.out.println(igra);
             	
             	System.out.print(i + " ");
-            	System.out.println(igra.trenutnoStanje);
+            	System.out.println(igra.izracunajNovoStanje());
             	splosno.Koordinati zadnja = igra.odigranePoteze.getLast().getKoordinati();
             	System.out.println("(" + (zadnja.getX() + 1) + ", " + (zadnja.getY() + 1) + ") " + igra.naPotezi.nasprotnik());
             	System.out.println("---------------------------------------------");
-            	if (igra.trenutnoStanje != Stanje.V_TEKU) {
+            	if (igra.izracunajNovoStanje() != Stanje.V_TEKU) {
             		System.out.println("Ponovi igro? [D/N]");
             		String s = in.nextLine();
             		
@@ -72,11 +72,11 @@ public class Gomoku {
             	System.out.println(igra);
             	
             	System.out.print(i + " ");
-            	System.out.println(igra.trenutnoStanje);
+            	System.out.println(igra.izracunajNovoStanje());
             	splosno.Koordinati zadnja = igra.odigranePoteze.getLast().getKoordinati();
             	System.out.println("(" + (zadnja.getX() + 1) + ", " + (zadnja.getY() + 1) + ") " + igra.naPotezi.nasprotnik());
             	System.out.println("---------------------------------------------");
-            	if (igra.trenutnoStanje != Stanje.V_TEKU) {
+            	if (igra.izracunajNovoStanje() != Stanje.V_TEKU) {
             		System.out.println("Ponovi igro? [D/N]");
             		String s = in.nextLine();
             		

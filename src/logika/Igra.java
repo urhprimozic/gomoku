@@ -22,9 +22,6 @@ public class Igra {
 
     // odigrane poteze
     public Deque<Poteza> odigranePoteze;
-    
-    // stanje igre
-    public Stanje trenutnoStanje;
 
     /**
      * Nova igra, v začetni poziciji je prazna in na potezi je O.
@@ -42,7 +39,6 @@ public class Igra {
                 this.plosca[v][s] = osnovnica.plosca[v][s];
             }
         }
-        this.trenutnoStanje = osnovnica.trenutnoStanje;
         this.naPotezi = osnovnica.naPotezi;
         odigranePoteze = new LinkedList<Poteza>();
         for (Poteza p: osnovnica.odigranePoteze) {
@@ -61,7 +57,6 @@ public class Igra {
         naPotezi = Igralec.C;
         this.sirina = sirina;
         this.visina = visina;
-        trenutnoStanje = Stanje.V_TEKU;
         odigranePoteze = new LinkedList<Poteza>();
     }
     
@@ -102,8 +97,8 @@ public class Igra {
         int x = zacetek.getX();
         int y = zacetek.getY();
         int stevec = 0; // število zaporednih žetonov igralca
-        while (x < sirina && y < visina && 0 <= x && 0 <= y) {
-            if (plosca[y][x] == igralec.getPolje()) {
+        while (x < visina && y < sirina && 0 <= x && 0 <= y) {
+            if (plosca[x][y] == igralec.getPolje()) {
                 stevec++;
             }
             else {
@@ -129,40 +124,29 @@ public class Igra {
     }
 
     public Stanje izracunajNovoStanje() {
-        /* Vrne stanje igre */
-
-        // Najprej preveri, če je trenutni igralec zmagal
-        // TODO optimizacija: potrebuje preverit samo presečišča z zadnjo potezo
-
-        // vsi stolpci
-        for (int x = 0; x < sirina; x++) {
-            if (petVVrsto(Smer.DOL, naPotezi, new splosno.Koordinati(x, 0))) {
-                return naPotezi.zmaga();
-            }
+    	if (odigranePoteze == null || odigranePoteze.size() == 0) return Stanje.V_TEKU;
+    	
+        Igralec c = odigranePoteze.getLast().getIgralec();
+        Koordinati p = odigranePoteze.getLast().getKoordinati();
+        
+        int x = p.getX();
+        int y = p.getY();
+        
+        if (petVVrsto(Smer.DOL, c, new Koordinati(Math.max(x-5,0),y))) {
+        	return c.zmaga();      
         }
-        // vrstice
-        for (int y = 0; y < sirina; y++) {
-            if (petVVrsto(Smer.DESNO, naPotezi, new splosno.Koordinati(0, y))) {
-                return naPotezi.zmaga();
-            }
+        if (petVVrsto(Smer.DESNO, c, new Koordinati(x, Math.max(0,y-5)))) {
+        	return c.zmaga();
         }
-        // diagonale pod glavno diagonalo
-        for (int y = 0; y < visina; y++) {
-            if (petVVrsto(Smer.DESNO_DOL, naPotezi, new splosno.Koordinati(0, y))) {
-                return naPotezi.zmaga();
-            }
-            else if(petVVrsto(Smer.DESNO_GOR, naPotezi, new splosno.Koordinati(0, y))) {
-            	return naPotezi.zmaga();
-            }
+        
+        int m = Math.min(5, Math.min(x, y));
+        if (petVVrsto(Smer.DESNO_DOL, c, new Koordinati(x-m,y-m))) {
+        	return c.zmaga();      
         }
-        // diagonale nad glavno
-        for (int x = 1; x < sirina; x++) {
-            if (petVVrsto(Smer.DESNO_DOL, naPotezi, new splosno.Koordinati(x, 0))) {
-                return naPotezi.zmaga();
-            }
-            else if(petVVrsto(Smer.DESNO_GOR, naPotezi, new splosno.Koordinati(x, 0))) {
-                return naPotezi.zmaga();
-            }
+        
+        int M = Math.min(5, Math.min(visina - x, y));
+        if (petVVrsto(Smer.DESNO_DOL, c, new Koordinati(x-M,y-M))) {
+        	return c.zmaga();      
         }
 
         // od tukaj dlje vemo, da nihče ni zmagal
@@ -182,9 +166,6 @@ public class Igra {
         if (plosca[x][y] == Polje.PRAZNO) {
             plosca[x][y] = naPotezi.getPolje();
             odigranePoteze.add(new Poteza(x, y, naPotezi));
-            
-            trenutnoStanje = izracunajNovoStanje();
-
             naPotezi = naPotezi.nasprotnik();
             return true;
         } else {
@@ -208,8 +189,7 @@ public class Igra {
             Igralec c = zadnja.getIgralec();
             
             plosca[p.getX()][p.getY()] = Polje.PRAZNO;
-            naPotezi = c;          
-            trenutnoStanje = izracunajNovoStanje();
+            naPotezi = c;
         }
     }
 }

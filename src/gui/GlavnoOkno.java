@@ -138,7 +138,7 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 		 	status.setText("Igra ni v teku.");
 		 }
 		 else {
-		 	switch(Vodja.igra.trenutnoStanje) {
+		 	switch(Vodja.igra.izracunajNovoStanje()) {
 		 	case NEODLOCENO: status.setText("Neodločeno!"); break;
 		 	case V_TEKU: 
 				String ime = "bel";
