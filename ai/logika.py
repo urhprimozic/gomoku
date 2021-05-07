@@ -85,12 +85,12 @@ class Igra():
             if self.plosca[vrstica][stolpec] == igralec.get_polje():
                 stevec += 1
             else:
-                if stevec == 5:
+                if stevec >= 5:
                     return True
                 stevec = 0
             vrstica += smer[0]
             stolpec += smer[1]
-        return stevec == 5
+        return stevec >= 5
 
     def izracunaj_novo_stanje(self):
         '''Vrne stanje igre '''

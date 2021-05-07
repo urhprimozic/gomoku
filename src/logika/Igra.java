@@ -93,6 +93,7 @@ public class Igra {
     boolean petVVrsto(Smer smer, Igralec igralec, splosno.Koordinati zacetek) {
         // urh
         // True, če je v dani smeri z zacetokv zacetek igralec dosegel točno 5
+        // PORPAVEK: tudi več je kul
         // zaporednih
         int x = zacetek.getX();
         int y = zacetek.getY();
@@ -104,7 +105,7 @@ public class Igra {
             else {
                 //na tem kvadratu ni več pravega žetona
                 // če jih je blo prej 5, je zmagal
-                if(stevec == 5){
+                if(stevec >= 5){
                     return true;
                 }
             	stevec = 0;
@@ -120,7 +121,7 @@ public class Igra {
             x += smer.x;
             y += smer.y;
         }
-        return (stevec == 5);
+        return (stevec >= 5);
     }
 
     public Stanje izracunajNovoStanje() {
