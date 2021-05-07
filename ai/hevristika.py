@@ -6,7 +6,7 @@ import torch.nn.functional as F
 input : (15x15) numpy array
 output : realno število ??
 '''
-class NNPolicy(nn.Module):
+class NNFullyConnected(nn.Module):
     """
     Returns a fully connected neural network of 
     given dimensions. The input is of dimensions
@@ -17,7 +17,7 @@ class NNPolicy(nn.Module):
     """
 
     def __init__(self, sizes, activation=nn.ReLU(inplace=True), output_activation=None):
-        super(NNPolicy, self).__init__()
+        super(NNFullyConnected, self).__init__()
         layers = []
         for i in range(len(sizes) - 1):
             layers.append(nn.Linear(sizes[i], sizes[i+1]))
@@ -28,7 +28,13 @@ class NNPolicy(nn.Module):
     def forward(self, x):
         return F.softmax(self.fwd(x), dim=-1)
 
-
+## class Mozgani():
+##     '''
+##     Overlay 
+##     '''
+##     def __init__(self, nn) -> None:
+##         self.nn = nn
+##     def igrajPotezo()
 
 class EncodingNNPolicy():
     '''

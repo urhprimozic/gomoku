@@ -12,6 +12,7 @@ _Gomoku game with simple AI. Project for programming 2  on FMF._
 
 Uporabljava Monte Cralo Search Tree z nevronsko mrežo za hervistiko. 
 
+### Viri:
+ - [alpha zero](https://raw.githubusercontent.com/suragnair/alpha-zero-general/master/pretrained_models/writeup.pdf#cite.alphagozero)
+ - [Adam](https://arxiv.org/pdf/1412.6980.pdf)
 ### Učenje
-Python
-Policy gradients (pytorch)

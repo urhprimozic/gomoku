@@ -1,120 +1,155 @@
+import logging
+import os
+import sys
+from collections import deque
+from pickle import Pickler, Unpickler
+from random import shuffle
+
 import numpy as np
-import gym
-from gym.spaces import Discrete, Box
-import torch.nn as nn
-import torch
-import torch.optim as optimizer
-import torch.nn.functional as F
-import matplotlib.pyplot as plt
+from tqdm import tqdm
+
+from Arena import Arena
+from MCTS import MCTS
+
+log = logging.getLogger(__name__)
 
 
-class MLP(nn.Module):
+class Coach():
     """
-    Returns a fully connected neural network of 
-    given dimensions. The input is of dimensions
-    of the shape of the observations and output
-    is of the shape of number of actions.
+    This class executes the self-play + learning. It uses the functions defined
+    in Game and NeuralNet. args are specified in main.py.
     """
 
-    def __init__(self, sizes, activation=nn.ReLU(inplace=True), output_activation=None):
-        super(MLP, self).__init__()
-        layers = []
-        for i in range(len(sizes) - 1):
-            layers.append(nn.Linear(sizes[i], sizes[i+1]))
-            if i < len(sizes) - 2:
-                layers.append(activation)
-        self.fwd = nn.Sequential(*layers)
-    
-    def forward(self, x):
-        return F.softmax(self.fwd(x), dim=-1)
+    def __init__(self, game, nnet, args):
+        self.game = game
+        self.nnet = nnet
+        self.pnet = self.nnet.__class__(self.game)  # the competitor network
+        self.args = args
+        self.mcts = MCTS(self.game, self.nnet, self.args)
+        self.trainExamplesHistory = []  # history of examples from args.numItersForTrainExamplesHistory latest iterations
+        self.skipFirstSelfPlay = False  # can be overriden in loadTrainExamples()
 
-def discount_rewards(rewards, gamma=0.99):
-    # Cumulative discounted sum
-    r = np.array([gamma**i * rewards[i] 
-                  for i in range(len(rewards))])
-    r = r[::-1].cumsum()[::-1]
-    # Subtracting the baseline reward 
-    # Intuitively this means if the network predicts what it
-    # expects it should not do too much about it
-    # Stabalizes and speeds up the training 
-    return r - r.mean()
+    def executeEpisode(self):
+        """
+        This function executes one episode of self-play, starting with player 1.
+        As the game is played, each turn is added as a training example to
+        trainExamples. The game is played till the game ends. After the game
+        ends, the outcome of the game is used to assign values to each example
+        in trainExamples.
+        It uses a temp=1 if episodeStep < tempThreshold, and thereafter
+        uses temp=0.
+        Returns:
+            trainExamples: a list of examples of the form (canonicalBoard, currPlayer, pi,v)
+                           pi is the MCTS informed policy vector, v is +1 if
+                           the player eventually won the game, else -1.
+        """
+        trainExamples = []
+        board = self.game.getInitBoard()
+        self.curPlayer = 1
+        episodeStep = 0
 
-def train(env_name='CartPole-v0', num_episodes=2000, batch_size=10, lr=1e-2, gamma=0.99):
+        while True:
+            episodeStep += 1
+            canonicalBoard = self.game.getCanonicalForm(board, self.curPlayer)
+            temp = int(episodeStep < self.args.tempThreshold)
 
-    env = gym.make(env_name)
-    model = MLP([env.observation_space.shape[0], 32, 20, env.action_space.n])
+            pi = self.mcts.getActionProb(canonicalBoard, temp=temp)
+            sym = self.game.getSymmetries(canonicalBoard, pi)
+            for b, p in sym:
+                trainExamples.append([b, self.curPlayer, p, None])
 
-    # Lists for maintaing logs
-    total_rewards = []
-    batch_rewards = []
-    batch_actions = []
-    batch_states = []
+            action = np.random.choice(len(pi), p=pi)
+            board, self.curPlayer = self.game.getNextState(board, self.curPlayer, action)
 
-    batch_counter = 1
-    opt = optimizer.Adam(model.parameters(), lr)
-    action_space = np.arange(env.action_space.n)
+            r = self.game.getGameEnded(board, self.curPlayer)
 
-    for ep in range(num_episodes):
-        # Reset
-        s_0 = env.reset()
-        states = []
-        rewards = []
-        actions = []
-        complete = False
-        while complete == False:
-            action_probs = model(torch.FloatTensor(s_0)).detach().numpy()
-            action = np.random.choice(action_space, p=action_probs)
-            s1, r, complete, _ = env.step(action)
-            states.append(s_0)
-            rewards.append(r)
-            actions.append(action)
-            s_0 = s1
-            if complete:
-                batch_rewards.extend(discount_rewards(rewards, gamma))
-                batch_states.extend(states)
-                batch_actions.extend(actions)
-                batch_counter += 1
-                total_rewards.append(sum(rewards))
+            if r != 0:
+                return [(x[0], x[2], r * ((-1) ** (x[1] != self.curPlayer))) for x in trainExamples]
 
-                if batch_counter == batch_size:
-                    # Prepare the batches for training
-                    # Add states, reward and actions to tensor
-                    opt.zero_grad()
-                    state_tensor = torch.FloatTensor(batch_states)
-                    reward_tensor = torch.FloatTensor(batch_rewards)
-                    action_tensor = torch.LongTensor(batch_actions)
+    def learn(self):
+        """
+        Performs numIters iterations with numEps episodes of self-play in each
+        iteration. After every iteration, it retrains neural network with
+        examples in trainExamples (which has a maximum length of maxlenofQueue).
+        It then pits the new neural network against the old one and accepts it
+        only if it wins >= updateThreshold fraction of games.
+        """
 
-                    # Convert the probs by the model to log probabilities
-                    log_probs = torch.log(model(state_tensor))
-                    # Mask the probs of the selected actions
-                    selected_log_probs = reward_tensor * log_probs[np.arange(len(action_tensor)), action_tensor]
-                    # Loss is negative of expected policy function J = R * log_prob
-                    loss = -selected_log_probs.mean()
+        for i in range(1, self.args.numIters + 1):
+            # bookkeeping
+            log.info(f'Starting Iter #{i} ...')
+            # examples of the iteration
+            if not self.skipFirstSelfPlay or i > 1:
+                iterationTrainExamples = deque([], maxlen=self.args.maxlenOfQueue)
 
-                    # Do the update gradient descent(with negative reward hence is gradient ascent) 
-                    loss.backward()
-                    opt.step()
+                for _ in tqdm(range(self.args.numEps), desc="Self Play"):
+                    self.mcts = MCTS(self.game, self.nnet, self.args)  # reset search tree
+                    iterationTrainExamples += self.executeEpisode()
 
-                    batch_rewards = []
-                    batch_actions = []
-                    batch_states = []
-                    batch_counter = 1
+                # save the iteration examples to the history 
+                self.trainExamplesHistory.append(iterationTrainExamples)
 
-                print("\rEp: {} Average of last 10: {:.2f}".format(
-                    ep + 1, np.mean(total_rewards[-10:])), end="")
-    
-    return total_rewards
+            if len(self.trainExamplesHistory) > self.args.numItersForTrainExamplesHistory:
+                log.warning(
+                    f"Removing the oldest entry in trainExamples. len(trainExamplesHistory) = {len(self.trainExamplesHistory)}")
+                self.trainExamplesHistory.pop(0)
+            # backup history to a file
+            # NB! the examples were collected using the model from the previous iteration, so (i-1)  
+            self.saveTrainExamples(i - 1)
 
-if __name__ == '__main__':
+            # shuffle examples before training
+            trainExamples = []
+            for e in self.trainExamplesHistory:
+                trainExamples.extend(e)
+            shuffle(trainExamples)
 
-    rewards = train()
-    window = 10
-    smoothed_rewards = [np.mean(rewards[i-window:i+1]) if i > window 
-                        else np.mean(rewards[:i+1]) for i in range(len(rewards))]
+            # training new network, keeping a copy of the old one
+            self.nnet.save_checkpoint(folder=self.args.checkpoint, filename='temp.pth.tar')
+            self.pnet.load_checkpoint(folder=self.args.checkpoint, filename='temp.pth.tar')
+            pmcts = MCTS(self.game, self.pnet, self.args)
 
-    plt.figure(figsize=(12,8))
-    plt.plot(rewards)
-    plt.plot(smoothed_rewards)
-    plt.ylabel('Total Rewards')
-    plt.xlabel('Episodes')
-    plt.show()
+            self.nnet.train(trainExamples)
+            nmcts = MCTS(self.game, self.nnet, self.args)
+
+            log.info('PITTING AGAINST PREVIOUS VERSION')
+            arena = Arena(lambda x: np.argmax(pmcts.getActionProb(x, temp=0)),
+                          lambda x: np.argmax(nmcts.getActionProb(x, temp=0)), self.game)
+            pwins, nwins, draws = arena.playGames(self.args.arenaCompare)
+
+            log.info('NEW/PREV WINS : %d / %d ; DRAWS : %d' % (nwins, pwins, draws))
+            if pwins + nwins == 0 or float(nwins) / (pwins + nwins) < self.args.updateThreshold:
+                log.info('REJECTING NEW MODEL')
+                self.nnet.load_checkpoint(folder=self.args.checkpoint, filename='temp.pth.tar')
+            else:
+                log.info('ACCEPTING NEW MODEL')
+                self.nnet.save_checkpoint(folder=self.args.checkpoint, filename=self.getCheckpointFile(i))
+                self.nnet.save_checkpoint(folder=self.args.checkpoint, filename='best.pth.tar')
+
+    def getCheckpointFile(self, iteration):
+        return 'checkpoint_' + str(iteration) + '.pth.tar'
+
+    def saveTrainExamples(self, iteration):
+        folder = self.args.checkpoint
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+        filename = os.path.join(folder, self.getCheckpointFile(iteration) + ".examples")
+        with open(filename, "wb+") as f:
+            Pickler(f).dump(self.trainExamplesHistory)
+        f.closed
+
+    def loadTrainExamples(self):
+        modelFile = os.path.join(self.args.load_folder_file[0], self.args.load_folder_file[1])
+        examplesFile = modelFile + ".examples"
+        if not os.path.isfile(examplesFile):
+            log.warning(f'File "{examplesFile}" with trainExamples not found!')
+            r = input("Continue? [y|n]")
+            if r != "y":
+                sys.exit()
+        else:
+            log.info("File with trainExamples found. Loading it...")
+            with open(examplesFile, "rb") as f:
+                self.trainExamplesHistory = Unpickler(f).load()
+            log.info('Loading done!')
+
+            # examples based on the model were already collected (loaded)
+            self.skipFirstSelfPlay = True
