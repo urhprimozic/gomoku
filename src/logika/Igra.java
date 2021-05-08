@@ -104,7 +104,7 @@ public class Igra {
             else {
                 //na tem kvadratu ni več pravega žetona
                 // če jih je blo prej 5, je zmagal
-                if(stevec == 5){
+                if(stevec >= 5){
                     return true;
                 }
             	stevec = 0;
@@ -120,7 +120,7 @@ public class Igra {
             x += smer.x;
             y += smer.y;
         }
-        return (stevec == 5);
+        return (stevec >= 5);
     }
 
     public Stanje izracunajNovoStanje() {

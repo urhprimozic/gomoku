@@ -2,7 +2,6 @@ package inteligenca;
 
 import logika.Igra;
 import logika.Igralec;
-import logika.Polje;
 
 public class OceniPozicijo {
 	

@@ -5,7 +5,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.EnumMap;
+import java.util.HashMap;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -15,7 +15,6 @@ import javax.swing.JMenuItem;
 
 import vodja.Vodja;
 import vodja.VrstaIgralca;
-import logika.Igralec;
 
 
 /**
@@ -111,51 +110,56 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == igraClovekRacunalnik) {
-			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
-			Vodja.vrstaIgralca.put(Igralec.C, VrstaIgralca.C); 
-			Vodja.vrstaIgralca.put(Igralec.B, VrstaIgralca.R);
+			Vodja.vrstaIgralca = new HashMap<Integer,VrstaIgralca>();
+			Vodja.vrstaIgralca.put(1, VrstaIgralca.C); 
+			Vodja.vrstaIgralca.put(-1, VrstaIgralca.R);
 			Vodja.igramoNovoIgro();
 		} else if (e.getSource() == igraRacunalnikClovek) {
-			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
-			Vodja.vrstaIgralca.put(Igralec.C, VrstaIgralca.R); 
-			Vodja.vrstaIgralca.put(Igralec.B, VrstaIgralca.C);
+			Vodja.vrstaIgralca = new HashMap<Integer,VrstaIgralca>();
+			Vodja.vrstaIgralca.put(1, VrstaIgralca.R); 
+			Vodja.vrstaIgralca.put(-1, VrstaIgralca.C);
 			Vodja.igramoNovoIgro();
 		} else if (e.getSource() == igraClovekClovek) {
-			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
-			Vodja.vrstaIgralca.put(Igralec.C, VrstaIgralca.C); 
-			Vodja.vrstaIgralca.put(Igralec.B, VrstaIgralca.C);
+			Vodja.vrstaIgralca = new HashMap<Integer,VrstaIgralca>();
+			Vodja.vrstaIgralca.put(1, VrstaIgralca.C); 
+			Vodja.vrstaIgralca.put(-1, VrstaIgralca.C);
 			Vodja.igramoNovoIgro();
 		} else if (e.getSource() == igraRacunalnikRacunalnik) {
-			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
-			Vodja.vrstaIgralca.put(Igralec.C, VrstaIgralca.R); 
-			Vodja.vrstaIgralca.put(Igralec.B, VrstaIgralca.R);
+			Vodja.vrstaIgralca = new HashMap<Integer,VrstaIgralca>();
+			Vodja.vrstaIgralca.put(1, VrstaIgralca.R); 
+			Vodja.vrstaIgralca.put(-1, VrstaIgralca.R);
 			Vodja.igramoNovoIgro();
 		}
 	}
 
 	public void osveziGUI() {
-		 if (Vodja.igra == null) {
-		 	status.setText("Igra ni v teku.");
-		 }
-		 else {
-		 	switch(Vodja.igra.izracunajNovoStanje()) {
-		 	case NEODLOCENO: status.setText("Neodločeno!"); break;
-		 	case V_TEKU: 
+		if (Vodja.igra == null) {
+			status.setText("Igra ni v teku.");
+		}
+		else {
+			double stanje = Vodja.igra.getGameEnded(Vodja.plosca, Vodja.igralec);
+			if (stanje == 0) {
 				String ime = "bel";
-				if (Vodja.igra.naPotezi == Igralec.C) ime = "črn";
+				if (Vodja.igralec == 1) ime = "črn";
 		 		status.setText("Na potezi je " + ime + 
-		 				" - " + Vodja.vrstaIgralca.get(Vodja.igra.naPotezi)); 
-		 		break;
-		 	case ZMAGA_C: 
-		 		status.setText("Zmagal je črn - " + 
-		 				Vodja.vrstaIgralca.get(Igralec.C));
-		 		break;
-		 	case ZMAGA_B: 
-		 		status.setText("Zmagal je bel. Rasist. - " + 
-		 				Vodja.vrstaIgralca.get(Igralec.B));
-		 		break;
-		 	}
-		 }
+		 				" - " + Vodja.vrstaIgralca.get(Vodja.igralec));
+			}
+			else if (stanje == -1 || stanje == 1) {
+				if (Vodja.igralec == 1) {
+					status.setText("Zmagal je bel. Rasist. - " + 
+					 		Vodja.vrstaIgralca.get(-1));
+				}
+				else {
+					status.setText("Zmagal je črn - " + 
+							Vodja.vrstaIgralca.get(1));
+				}
+			}
+			else {
+				System.out.println(stanje);
+				status.setText("Neodločeno!");
+			}
+			
+		}
 		polje.repaint();
 	}
 	
