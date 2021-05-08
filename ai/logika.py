@@ -54,13 +54,13 @@ class Igra():
             for p in vrstica:
                 if p == Polje.B:
                     ans += " B "
-                if p == Polje.C:
+                elif p == Polje.C:
                     ans += " C "
-                if p == Polje.PRAZNO:
+                elif p == Polje.PRAZNO:
                     ans += " . "
                 else:
                     raise TypeError(
-                        f"Buraz, polje[*][*] je tipa {str(type(p))}, mogu bi pa bit Polje")
+                        f"Buraz, polje[*][*] = {str(p)} je tipa {str(type(p))}, mogu bi pa bit Polje")
             ans += "\n"
         return ans
 
@@ -85,12 +85,12 @@ class Igra():
             if self.plosca[vrstica][stolpec] == igralec.get_polje():
                 stevec += 1
             else:
-                if stevec == 5:
+                if stevec >= 5:
                     return True
                 stevec = 0
             vrstica += smer[0]
             stolpec += smer[1]
-        return stevec == 5
+        return stevec >= 5
 
     def izracunaj_novo_stanje(self):
         '''Vrne stanje igre '''

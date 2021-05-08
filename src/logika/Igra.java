@@ -93,6 +93,7 @@ public class Igra {
     boolean petVVrsto(Smer smer, Igralec igralec, splosno.Koordinati zacetek) {
         // urh
         // True, če je v dani smeri z zacetokv zacetek igralec dosegel točno 5
+        // PORPAVEK: tudi več je kul
         // zaporednih
         int x = zacetek.getX();
         int y = zacetek.getY();
