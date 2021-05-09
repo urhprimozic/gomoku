@@ -10,7 +10,7 @@ import java.awt.event.MouseListener;
 
 import javax.swing.JPanel;
 
-import montecarlo.Game;
+import logika.Game;
 import splosno.Koordinati;
 import vodja.Vodja;
 

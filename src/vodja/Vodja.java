@@ -1,15 +1,16 @@
 package vodja;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.SwingWorker;
 
 import gui.GlavnoOkno;
+import inteligenca.MonteCarloTreeSearch;
+import inteligenca.NNet;
+import logika.Board;
+import logika.Game;
 import splosno.Koordinati;
-import montecarlo.Board;
-import montecarlo.Game;
-import montecarlo.MonteCarloTreeSearch;
-import montecarlo.NNet;
 
 public class Vodja {
 	public static final int N = 15;
@@ -22,7 +23,8 @@ public class Vodja {
 	public static NNet nnet;
 	
 	public static boolean clovekNaVrsti = false;
-	public static MonteCarloTreeSearch mcts;
+	public static MonteCarloTreeSearch mcts1;
+	public static MonteCarloTreeSearch mcts2;
 	
 	public static Board plosca;
 	public static int igralec;
@@ -32,7 +34,27 @@ public class Vodja {
 	public static void igramoNovoIgro () {
 		igra = new Game(N);
 		nnet = new NNet();
-		mcts = new MonteCarloTreeSearch(igra, nnet);
+		
+		if (vrstaIgralca.get(1) == VrstaIgralca.R) {
+			mcts1 = new MonteCarloTreeSearch(igra, nnet, 1);
+		
+			if (vrstaIgralca.get(-1) == VrstaIgralca.R) {
+				mcts2 = new MonteCarloTreeSearch(igra, nnet, -1);
+			}
+			else {
+				mcts2 = null;
+			}
+		}
+		else {
+			mcts1 = null;
+			if (vrstaIgralca.get(-1) == VrstaIgralca.R) {
+				mcts2 = new MonteCarloTreeSearch(igra, nnet, -1);
+			}
+			else {
+				mcts2 = null;
+			}
+		}
+		
 		plosca = new Board(N);
 		igralec = 1;
 		igramo();
@@ -63,7 +85,14 @@ public class Vodja {
 		SwingWorker<Koordinati, Void> worker = new SwingWorker<Koordinati, Void> () {
 			@Override
 			protected Koordinati doInBackground() {
-				double[] probs = mcts.getActionProb(plosca);
+				double[] probs = null;
+				if (igralec == 1) {
+					probs = mcts1.getActionProb(plosca);
+				}
+				if (igralec == -1) {
+					probs = mcts2.getActionProb(plosca);
+				}
+				
 				double sum = 0;
 				double cuttoff = Math.random();
 				for (int i = 0; i < probs.length; ++i) {
@@ -79,7 +108,14 @@ public class Vodja {
 				Koordinati poteza = null;
 				try {poteza = get();} catch (Exception e) {e.printStackTrace();};
 				if (igra == zacetkaIgra) {
-					plosca.executeMove(poteza, igralec);
+					if (poteza != null) {
+						plosca.executeMove(poteza, igralec);
+					}
+					else {
+						System.out.println("Igramo nakljucno potezo!!! Nekaj je narobe.");
+						List<Koordinati> mozne = plosca.getLegalMoves();
+						plosca.executeMove(mozne.get((int)(Math.random() * mozne.size())), igralec);
+					}
 					igralec *= -1;
 					igramo();
 				}

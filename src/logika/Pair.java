@@ -1,4 +1,4 @@
-package splosno;
+package logika;
 
 import java.util.Objects;
 
@@ -15,7 +15,7 @@ public class Pair<T1, T2> {
 		return x;
 	}
 	
-	public T2 getSecond() {
+	public T2 getLast() {
 		return y;
 	}
 	
@@ -23,7 +23,7 @@ public class Pair<T1, T2> {
 		this.x = x;
 	}
 	
-	public void setSecond(T2 y) {
+	public void setLast(T2 y) {
 		this.y = y;
 	}
 	

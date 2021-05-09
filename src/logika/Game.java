@@ -1,8 +1,7 @@
-package montecarlo;
+package logika;
 
 
 import splosno.Koordinati;
-import splosno.Pair;
 
 public class Game {
 	public int n;
