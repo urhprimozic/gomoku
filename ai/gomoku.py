@@ -11,8 +11,8 @@ class GomokuGame(Game):
     DESNO_DOL = (1, 1)
     DESNO_GOR = (-1, 1)
 
-    def __init__(self):
-        self.size = 15
+    def __init__(self, size):
+        self.size = size
         self.actions = np.array([(i, j) for i in range(self.size)
                                  for j in range(self.size)])
 
@@ -54,6 +54,7 @@ class GomokuGame(Game):
 
         Dogovor: (vrstica, stolpec)
         """
+        action = self.actions[action]
         vrstica = action[0]
         stolpec = action[1]
         if board[vrstica][stolpec] == 0:  # prazno
@@ -116,24 +117,24 @@ class GomokuGame(Game):
         # TODO optimizacija (preveri le presečišče z zadnjo potezo)
 
         # stolpci
-        for stolpec in range(self.sirina):
+        for stolpec in range(self.size):
             if self.pet_v_vrsto(self.DOL, player, (0, stolpec), board):
                 return player
 
         # vrstice
-        for vrstica in range(self.visina):
+        for vrstica in range(self.size):
             if self.pet_v_vrsto(self.DESNO, player, (vrstica, 0), board):
                 return player
 
         # diagonale pod glavno diagonalo
-        for vrstica in range(self.visina):
+        for vrstica in range(self.size):
             if self.pet_v_vrsto(self.DESNO_DOL, player, (vrstica, 0), board):
                 return player
             if self.pet_v_vrsto(self.DESNO_GOR, player, (vrstica, 0), board):
                 return player
 
         # diagonale nad glavno diagonalo
-        for stolpec in range(1, self.sirina):
+        for stolpec in range(1, self.size):
             if self.pet_v_vrsto(self.DESNO_DOL, player, (0, stolpec), board):
                 return player
             if self.pet_v_vrsto(self.DESNO_GOR, player, (0, stolpec), board):
@@ -174,7 +175,7 @@ class GomokuGame(Game):
                        is used when training the neural network from examples.
         """
         # assert(len(pi) == self.n**2+1)  # 1 for pass
-        pi_board = np.reshape(pi[:-1], (self.size, self.size))
+        pi_board = np.reshape(pi, (self.size, self.size))
         l = []
 
         for i in range(1, 5):
