@@ -5,11 +5,10 @@ import java.util.Map;
 import javax.swing.SwingWorker;
 
 import gui.GlavnoOkno;
+import inteligenca.Inteligenca;
+import logika.Game;
+import logika.Igra;
 import splosno.Koordinati;
-import montecarlo.Board;
-import montecarlo.Game;
-import montecarlo.MonteCarloTreeSearch;
-import montecarlo.NNet;
 
 public class Vodja {
 	public static final int N = 15;
@@ -18,35 +17,42 @@ public class Vodja {
 	
 	public static GlavnoOkno okno;
 	
-	public static Game igra;
-	public static NNet nnet;
+	public static Igra igra;
 	
 	public static boolean clovekNaVrsti = false;
-	public static MonteCarloTreeSearch mcts;
 	
-	public static Board plosca;
-	public static int igralec;
-	
-	public static int numPoteze;
+	public static Inteligenca comp1;
+	public static Inteligenca comp2;
 		
 	public static void igramoNovoIgro () {
-		igra = new Game(N);
-		nnet = new NNet();
-		mcts = new MonteCarloTreeSearch(igra, nnet);
-		plosca = new Board(N);
-		igralec = 1;
+		igra = new Igra();
+		
+		if (vrstaIgralca.get(1) == VrstaIgralca.R) {
+			comp1 = new Inteligenca();
+		}
+		else {
+			comp1 = null;
+		}
+		
+		if (vrstaIgralca.get(-1) == VrstaIgralca.R) {
+			comp2 = new Inteligenca();
+		}
+		else {
+			comp2 = null;
+		}
+		
 		igramo();
 	}
 	
 	public static void igramo () {
 		okno.osveziGUI();
-		double stanje = igra.getGameEnded(plosca, igralec);
+		double stanje = Game.getGameEnded(igra.board, igra.igralec);
 		
 		if (stanje != 0) {
 			return; // odhajamo iz metode igramo
 		}
 
-		VrstaIgralca vrstaNaPotezi = vrstaIgralca.get(igralec);
+		VrstaIgralca vrstaNaPotezi = vrstaIgralca.get(igra.igralec);
 		switch (vrstaNaPotezi) {
 		case C: 
 			clovekNaVrsti = true;
@@ -59,28 +65,23 @@ public class Vodja {
 
 	
 	public static void igrajRacunalnikovoPotezo() {
-		Game zacetkaIgra = igra;
+		Igra zacetnaIgra = igra;
 		SwingWorker<Koordinati, Void> worker = new SwingWorker<Koordinati, Void> () {
 			@Override
 			protected Koordinati doInBackground() {
-				double[] probs = mcts.getActionProb(plosca);
-				double sum = 0;
-				double cuttoff = Math.random();
-				for (int i = 0; i < probs.length; ++i) {
-					if (sum + probs[i] >= cuttoff) {
-						return new Koordinati(i / N, i % N);
-					}
-					sum += probs[i];	
+				if (igra.igralec == 1) {
+					return comp1.izberiPotezo(igra);
 				}
-				return null;
+				else {
+					return comp2.izberiPotezo(igra);
+				}
 			}
 			@Override
 			protected void done () {
 				Koordinati poteza = null;
 				try {poteza = get();} catch (Exception e) {e.printStackTrace();};
-				if (igra == zacetkaIgra) {
-					plosca.executeMove(poteza, igralec);
-					igralec *= -1;
+				if (igra == zacetnaIgra) {
+					igra.odigraj(poteza);
 					igramo();
 				}
 			}
@@ -89,9 +90,8 @@ public class Vodja {
 	}
 		
 	public static void igrajClovekovoPotezo(Koordinati poteza) {
-		plosca.executeMove(poteza, igralec);
+		igra.odigraj(poteza);
 		clovekNaVrsti = false;
-		igralec *= -1; 
 		igramo();
 	}
 

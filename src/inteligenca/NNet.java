@@ -1,6 +1,7 @@
-package montecarlo;
+package inteligenca;
 
-import splosno.Pair;
+import logika.Board;
+import logika.Pair;
 
 public class NNet {
 	

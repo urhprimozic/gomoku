@@ -10,7 +10,7 @@ import java.awt.event.MouseListener;
 
 import javax.swing.JPanel;
 
-import montecarlo.Game;
+import logika.Igra;
 import splosno.Koordinati;
 import vodja.Vodja;
 
@@ -39,12 +39,12 @@ public class IgralnoPolje extends JPanel implements MouseListener {
 
 	// Širina enega kvadratka
 	private double squareWidth() {
-		Game igra = Vodja.igra;
+		Igra igra = Vodja.igra;
 		if (igra == null) {
 			System.out.println("WARNING: squareWidth() called on igra=null");
 			return 0.0;
 		}
-		return Math.min(getWidth() / igra.n, getHeight() / igra.n);
+		return Math.min(getWidth() / igra.N, getHeight() / igra.N);
 	}
 
 	@Override
@@ -60,15 +60,15 @@ public class IgralnoPolje extends JPanel implements MouseListener {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
 
-		Game igra = Vodja.igra;
+		Igra igra = Vodja.igra;
 		double w = squareWidth();
 		if (igra != null) {
 			g2.setStroke(new BasicStroke((float) (w * SIRINA_CRTE)));
 
 			// polja
-			for (int vrstica = 0; vrstica < igra.n; vrstica++) {
-				for (int stolpec = 0; stolpec < igra.n; stolpec++) {
-					int p = Vodja.plosca.plosca[vrstica][stolpec];
+			for (int vrstica = 0; vrstica < igra.N; vrstica++) {
+				for (int stolpec = 0; stolpec < igra.N; stolpec++) {
+					int p = Vodja.igra.board.plosca[vrstica][stolpec];
 					if (p == 0) {
 						continue;
 					}
@@ -86,11 +86,11 @@ public class IgralnoPolje extends JPanel implements MouseListener {
 
 			// mreža
 			g2.setColor(barvaCrte);
-			for (int vrstica = 1; vrstica < igra.n; vrstica++) {
-				g2.drawLine(0, vrstica * (int) w, igra.n * (int) w, vrstica * (int) w);
+			for (int vrstica = 1; vrstica < igra.N; vrstica++) {
+				g2.drawLine(0, vrstica * (int) w, igra.N * (int) w, vrstica * (int) w);
 			}
-			for (int stolpec = 1; stolpec < igra.n; stolpec++) {
-				g2.drawLine(stolpec * (int) w, 0, stolpec * (int) w, igra.n * (int) w);
+			for (int stolpec = 1; stolpec < igra.N; stolpec++) {
+				g2.drawLine(stolpec * (int) w, 0, stolpec * (int) w, igra.N * (int) w);
 			}
 		}
 
@@ -98,7 +98,7 @@ public class IgralnoPolje extends JPanel implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		Game igra = Vodja.igra; 
+		Igra igra = Vodja.igra; 
 		if(igra != null){
 			if (Vodja.clovekNaVrsti) {
 				int x = e.getX();
@@ -108,9 +108,9 @@ public class IgralnoPolje extends JPanel implements MouseListener {
 				double di = (x % w) / squareWidth() ;
 				int j = y / w ;
 				double dj = (y % w) / squareWidth() ;
-				if (0 <= i && i < igra.n &&
+				if (0 <= i && i < igra.N &&
 						0.5 * SIRINA_CRTE < di && di < 1.0 - 0.5 * SIRINA_CRTE &&
-						0 <= j && j < igra.n && 
+						0 <= j && j < igra.N && 
 						0.5 * SIRINA_CRTE < dj && dj < 1.0 - 0.5 * SIRINA_CRTE) {
 					Vodja.igrajClovekovoPotezo (new Koordinati(j, i));
 				}

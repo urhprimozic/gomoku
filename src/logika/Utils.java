@@ -1,4 +1,4 @@
-package splosno;
+package logika;
 
 import java.util.List;
 

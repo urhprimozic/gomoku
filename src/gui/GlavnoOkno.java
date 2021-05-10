@@ -13,6 +13,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+import logika.Game;
 import vodja.Vodja;
 import vodja.VrstaIgralca;
 
@@ -137,15 +138,15 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 			status.setText("Igra ni v teku.");
 		}
 		else {
-			double stanje = Vodja.igra.getGameEnded(Vodja.plosca, Vodja.igralec);
+			double stanje = Game.getGameEnded(Vodja.igra.board, Vodja.igra.igralec);
 			if (stanje == 0) {
 				String ime = "bel";
-				if (Vodja.igralec == 1) ime = "črn";
+				if (Vodja.igra.igralec == 1) ime = "črn";
 		 		status.setText("Na potezi je " + ime + 
-		 				" - " + Vodja.vrstaIgralca.get(Vodja.igralec));
+		 				" - " + Vodja.vrstaIgralca.get(Vodja.igra.igralec));
 			}
 			else if (stanje == -1 || stanje == 1) {
-				if (Vodja.igralec == 1) {
+				if (Vodja.igra.igralec == 1) {
 					status.setText("Zmagal je bel. Rasist. - " + 
 					 		Vodja.vrstaIgralca.get(-1));
 				}

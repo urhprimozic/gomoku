@@ -1,9 +1,7 @@
-package montecarlo;
+package logika;
 
 import java.util.ArrayList;
 import java.util.List;
-
-
 import splosno.Koordinati;
 
 public class Board {
