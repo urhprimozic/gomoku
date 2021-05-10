@@ -4,63 +4,58 @@ package logika;
 import splosno.Koordinati;
 
 public class Game {
-	public int n;
-	public final int nir = 5;
+	public static final int nir = 5;
 	
-	public Game(int N) {
-		n = N;
-	}
-	
-	public String stringRepresentation(Board b) {
+	public static String stringRepresentation(Board b) {
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < n; ++i) {
-			for (int j = 0; j < n; ++j) {
+		for (int i = 0; i < b.n; ++i) {
+			for (int j = 0; j < b.n; ++j) {
 				sb.append(Integer.toString(b.plosca[i][j]));
 			}
 		}
 		return sb.toString();
 	}
 	
-	public int[][] getInitBoard() {
-		Board b = new Board(n);
+	public static int[][] getInitBoard(int size) {
+		Board b = new Board(size);
 		return b.plosca;
 	}
 	
-	public Pair<Integer, Integer> getBoardSize() {
-		return new Pair<Integer, Integer>(n, n);
+	public static Pair<Integer, Integer> getBoardSize(Board b) {
+		return new Pair<Integer, Integer>(b.n, b.n);
 	}
 	
-	public int getActionSize() {
-		return n * n;
+	public static int getActionSize(Board b) {
+		return b.n * b.n;
 	}
 	
-	public Pair<Board, Integer> getNextState(Board b, int p, int a) {
-		Board next = new Board(n);
+	public static Pair<Board, Integer> getNextState(Board b, int p, int a) {
+		Board next = new Board(b.n);
 		next.plosca = new int[b.n][b.n];
 		for (int i = 0; i < b.n; ++i) {
 			for (int j = 0; j < b.n; ++j) {
 				next.plosca[i][j] = b.plosca[i][j];
 			}
 		}
-		next.executeMove(new Koordinati(a / n, a % n), p);
+		next.executeMove(new Koordinati(a / b.n, a % b.n), p);
 		return new Pair<Board, Integer>(next, -p);
 	}
 	
-	public int[] getValidMoves(Board b, int p) {
-		int[] valids = new int[getActionSize()];
-		for (int i = 0; i < n; ++i) {
-			for (int j = 0;  j < n; ++j) {
-				valids[n * i + j] = b.plosca[i][j] == 0 ? 1 : 0;
+	public static int[] getValidMoves(Board b, int p) {
+		int[] valids = new int[getActionSize(b)];
+		for (int i = 0; i < b.n; ++i) {
+			for (int j = 0;  j < b.n; ++j) {
+				valids[b.n * i + j] = b.plosca[i][j] == 0 ? 1 : 0;
 			}
 		}
 		return valids;
 	}
 	
-	public double getGameEnded(Board b, int player) {
-		for (int w = 0; w < n; ++w) {
-			for (int h = 0; h < n; ++h) {
+	public static double getGameEnded(Board b, int player) {
+		for (int w = 0; w < b.n; ++w) {
+			for (int h = 0; h < b.n; ++h) {
 				if_1:
-				if (w < n - nir + 1 && b.plosca[w][h] != 0) {
+				if (w < b.n - nir + 1 && b.plosca[w][h] != 0) {
 					int color = b.plosca[w][h];
 					for (int i = w; i < w + nir; ++i) {
 						if (b.plosca[i][h] != color) {
@@ -71,7 +66,7 @@ public class Game {
 				}
 				
 				if_2:
-				if (h < n - nir + 1 && b.plosca[w][h] != 0) {
+				if (h < b.n - nir + 1 && b.plosca[w][h] != 0) {
 					int color = b.plosca[w][h];
 					for (int j = h; j < h + nir; ++j) {
 						if (b.plosca[w][j] != color) {
@@ -82,7 +77,7 @@ public class Game {
 				}
 				
 				if_3:
-				if (w < n - nir + 1 && h < n - nir + 1 && b.plosca[w][h] != 0) {
+				if (w < b.n - nir + 1 && h < b.n - nir + 1 && b.plosca[w][h] != 0) {
 					int color = b.plosca[w][h];
 					for (int k = 0; k < nir; ++k) {
 						if (b.plosca[w+k][h+k] != color) {
@@ -93,7 +88,7 @@ public class Game {
 				}
 				
 				if_4:
-				if (w < n - nir + 1 && h < n && h >= nir - 1 && b.plosca[w][h] != 0) {
+				if (w < b.n - nir + 1 && h < b.n && h >= nir - 1 && b.plosca[w][h] != 0) {
 					int color = b.plosca[w][h];
 					for (int l = 0; l < nir; ++l) {
 						if (b.plosca[w+l][h-l] != color) {
@@ -114,9 +109,9 @@ public class Game {
 		return 1e-4;
 	}
 	
-	public Board getCannonicalForm(Board b, int player) {
-		for (int i = 0; i < n; ++i) {
-			for(int j = 0; j < n; ++j) {
+	public static Board getCannonicalForm(Board b, int player) {
+		for (int i = 0; i < b.n; ++i) {
+			for(int j = 0; j < b.n; ++j) {
 				b.plosca[i][j] *= player;
 			}
 		}

@@ -14,21 +14,19 @@ import logika.Utils;
 
 public class MonteCarloTreeSearch {
 	
-	protected Game igra;
-	protected NNet nnet;
+	private NNet nnet;
 	
-	private final int timeMilli = 5000;
+	private final int timeMilli = 4500;
 	private final double cpuct = 1.0;
 	private final double EPS = 1e-8;
 		
-	protected Map<Pair<String, Integer>, Pair<Double, Integer>> stateActionMap;
-	protected Map<String, MCTSMapEntry> stateMap;
+	private Map<Pair<String, Integer>, Pair<Double, Integer>> stateActionMap;
+	private Map<String, MCTSMapEntry> stateMap;
 	
 	private int depth;
 	private int gamePlayer;
 	
-	public MonteCarloTreeSearch(Game igra, NNet nnet, int p) {
-		this.igra = igra;
+	public MonteCarloTreeSearch(NNet nnet, int p) {
 		this.nnet = nnet;
 		this.gamePlayer = p;
 		
@@ -52,9 +50,9 @@ public class MonteCarloTreeSearch {
 	
 	public double[] getActionProb(Board board, double temp) {
 		
-		Board canonicalBoard = new Board(igra.n);
-		for (int i = 0; i < igra.n; ++i) {
-			for (int j = 0; j < igra.n; ++j) {
+		Board canonicalBoard = new Board(board.n);
+		for (int i = 0; i < board.n; ++i) {
+			for (int j = 0; j < board.n; ++j) {
 				canonicalBoard.plosca[i][j] = board.plosca[i][j] * -gamePlayer;
 			}
 		}		
@@ -69,10 +67,10 @@ public class MonteCarloTreeSearch {
 		}
 		System.out.println(n + " simulacij");
 		
-		String s = igra.stringRepresentation(canonicalBoard);
-		int[] counts = new int[igra.getActionSize()];
+		String s = Game.stringRepresentation(canonicalBoard);
+		int[] counts = new int[Game.getActionSize(board)];
 		
-		for (int i = 0; i < igra.getActionSize(); ++i) {
+		for (int i = 0; i < Game.getActionSize(board); ++i) {
 			Pair<String, Integer> sa = new Pair<String, Integer>(s, i);
 			Pair<Double, Integer> entry = stateActionMap.get(sa);
 			counts[i] = entry == null ? 0 : entry.getLast();
@@ -108,7 +106,7 @@ public class MonteCarloTreeSearch {
 	}
 	
 	public double search(Board board) {
-		String s = igra.stringRepresentation(board);
+		String s = Game.stringRepresentation(board);
 		
 		MCTSMapEntry entry = stateMap.get(s);
 		
@@ -118,7 +116,7 @@ public class MonteCarloTreeSearch {
 		}
 		
 		if (entry.E == -Double.MIN_VALUE) {
-			entry.E = igra.getGameEnded(board, 1);
+			entry.E = Game.getGameEnded(board, 1);
 		}
 		if (entry.E != 0) {
 			return -entry.E;
@@ -128,7 +126,7 @@ public class MonteCarloTreeSearch {
 			entry.P = result.getFirst();
 			double v = result.getLast();
 			
-			int[] valids = igra.getValidMoves(board, 1);
+			int[] valids = Game.getValidMoves(board, 1);
 			double[] arr = entry.P;
 			for (int i = 0; i < arr.length; ++i) {
 				arr[i] = valids[i] == 1 ? arr[i] : 0;
@@ -160,7 +158,7 @@ public class MonteCarloTreeSearch {
 		int bestAction = -1;
 		
 		
-		for (int a = 0; a < igra.getActionSize(); ++a) {
+		for (int a = 0; a < Game.getActionSize(board); ++a) {
 			if (valids[a] == 1) {
 				double u = 0;
 				Pair<String, Integer> p = new Pair<String, Integer>(s, a);
@@ -183,10 +181,10 @@ public class MonteCarloTreeSearch {
 		
 		int a = bestAction;
 		
-		Pair<Board, Integer> result = igra.getNextState(board, 1, a);
+		Pair<Board, Integer> result = Game.getNextState(board, 1, a);
 		Board nextBoard = result.getFirst();
 		int nextPlayer = result.getLast();
-		nextBoard = igra.getCannonicalForm(nextBoard, nextPlayer);
+		nextBoard = Game.getCannonicalForm(nextBoard, nextPlayer);
 		
 		double v = search(nextBoard);
 		

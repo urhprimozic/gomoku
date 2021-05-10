@@ -27,7 +27,6 @@ public class Pair<T1, T2> {
 		this.y = y;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object other) {
 		if (this == other) {
@@ -39,6 +38,7 @@ public class Pair<T1, T2> {
 		if (getClass() != other.getClass()) {
 			return false;
 		}
+		@SuppressWarnings("unchecked")
 		Pair<T1, T2> o = (Pair<T1, T2>) other;
 		return Objects.equals(x, o.x) && Objects.equals(y, o.y);
 	}
