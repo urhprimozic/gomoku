@@ -14,6 +14,14 @@ class Stanje(enum.Enum):
     ZMAGA_B = 2
     NEODLOCENO = 3
 
+def convert(polje):
+    if  polje ==Polje.PRAZNO:
+        return 0
+    if  polje ==Polje.C:
+        return 1
+    if  polje ==Polje.B:
+        return -1
+    return 0
 
 class Igralec(enum.Enum):
     C = 0
@@ -157,5 +165,5 @@ class Igra():
         if not self.odigraj(poteza):
             print(
                 "ERROR - odigrajNakljucno je odigral ilegalno potezo.\n Napaka v moznePoteze()\n ali odigraj()")
-
-    # TODO a rabmo še razveljavi zadnjo??
+   
+   

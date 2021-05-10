@@ -36,8 +36,10 @@ class Coach():
         trainExamples. The game is played till the game ends. After the game
         ends, the outcome of the game is used to assign values to each example
         in trainExamples.
+
         It uses a temp=1 if episodeStep < tempThreshold, and thereafter
         uses temp=0.
+
         Returns:
             trainExamples: a list of examples of the form (canonicalBoard, currPlayer, pi,v)
                            pi is the MCTS informed policy vector, v is +1 if

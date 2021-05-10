@@ -1,3 +1,5 @@
+# DEPRECATED!!
+
 import enum
 from logika import Igra, Igralec, Polje, Stanje
 

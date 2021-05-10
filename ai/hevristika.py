@@ -1,3 +1,5 @@
+# DEPRECATED!!
+
 import torch.nn as nn
 import torch
 import torch.optim as optimizer
