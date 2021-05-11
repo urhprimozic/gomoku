@@ -13,16 +13,16 @@ log = logging.getLogger(__name__)
 coloredlogs.install(level='INFO')  # Change this to DEBUG to see more info.
 
 args = dotdict({
-    'numIters': 2,
-    'numEps': 4,#100,              # Number of complete self-play games to simulate during a new iteration.
+    'numIters': 20,
+    'numEps': 100,#100,              # Number of complete self-play games to simulate during a new iteration.
     'tempThreshold': 15,        #
     'updateThreshold': 0.6,     # During arena playoff, new neural net will be accepted if threshold or more of games are won.
-    'maxlenOfQueue': 200, #200000,    # Number of game examples to train the neural networks.
-    'numMCTSSims': 5, #25,          # Number of games moves for MCTS to simulate.
-    'arenaCompare': 4, #40,         # Number of games to play during arena play to determine if new net will be accepted.
+    'maxlenOfQueue': 90000, #200000,    # Number of game examples to train the neural networks.
+    'numMCTSSims': 25, #25,          # Number of games moves for MCTS to simulate.
+    'arenaCompare': 40, #40,         # Number of games to play during arena play to determine if new net will be accepted.
     'cpuct': 1,
 
-    'checkpoint': './temp/',
+    'checkpoint': './test_1/',
     'load_model': False,
     'load_folder_file': ('/dev/models/8x100x50','best.pth.tar'),
     'numItersForTrainExamplesHistory': 20,
@@ -30,7 +30,7 @@ args = dotdict({
 })
 
 
-def main():
+def main():# filename=None
     log.info('Loading %s...', Game.__name__)
     g = Game(15)
 
@@ -51,10 +51,14 @@ def main():
         c.loadTrainExamples()
 
     log.info('Starting the learning process 🎉')
-    #c.learn()
-    c.learn_mulitprocess()
+    c.learn()
+    #if filename is None:
+    #    nnet.save_checkpoint()
+    #else:
+    #    nnet.save_checkpoint(filename=filename)
+    
 
 
 if __name__ == "__main__":
-    mp.set_start_method('spawn')
+    #mp.set_start_method('spawn')
     main()
