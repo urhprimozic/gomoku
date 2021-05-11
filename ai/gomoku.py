@@ -104,6 +104,8 @@ class GomokuGame(Game):
         return stevec >= 5
 
     def getGameEnded(self, board, player):
+        player = -player
+        #print(self.display(board))
         """
         Input:
             board: current board
@@ -185,7 +187,7 @@ class GomokuGame(Game):
                 if j:
                     newB = np.fliplr(newB)
                     newPi = np.fliplr(newPi)
-                l += [(newB, list(newPi.ravel()) + [pi[-1]])]
+                l += [(newB, list(newPi.ravel()))]
         return l
 
     def stringRepresentation(self, board):
@@ -213,6 +215,7 @@ class GomokuGame(Game):
                 else:
                     raise TypeError("Ultra frkse stari.")
             ans += "\n"
+        print(ans)
         return ans
 
 

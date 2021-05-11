@@ -17,6 +17,7 @@ public class Igra {
 		if (board.plosca[koordinati.getX()][koordinati.getY()] == 0) {
 			board.executeMove(koordinati, igralec);
 			igralec *= -1;
+			System.out.println(koordinati.toString());
 			return true;
 		}
 		return false;
