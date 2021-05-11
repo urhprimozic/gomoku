@@ -6,18 +6,19 @@ from Coach import Coach
 from gomoku import GomokuGame as Game
 from gomokuNNet import NNetWrapper as nn
 from utils import *
+import multiprocessing as mp
 
 log = logging.getLogger(__name__)
 
 coloredlogs.install(level='INFO')  # Change this to DEBUG to see more info.
 
 args = dotdict({
-    'numIters': 1000,
-    'numEps': 10,#100,              # Number of complete self-play games to simulate during a new iteration.
+    'numIters': 2,
+    'numEps': 4,#100,              # Number of complete self-play games to simulate during a new iteration.
     'tempThreshold': 15,        #
     'updateThreshold': 0.6,     # During arena playoff, new neural net will be accepted if threshold or more of games are won.
     'maxlenOfQueue': 200, #200000,    # Number of game examples to train the neural networks.
-    'numMCTSSims': 10, #25,          # Number of games moves for MCTS to simulate.
+    'numMCTSSims': 5, #25,          # Number of games moves for MCTS to simulate.
     'arenaCompare': 4, #40,         # Number of games to play during arena play to determine if new net will be accepted.
     'cpuct': 1,
 
@@ -50,8 +51,10 @@ def main():
         c.loadTrainExamples()
 
     log.info('Starting the learning process 🎉')
-    c.learn()
+    #c.learn()
+    c.learn_mulitprocess()
 
 
 if __name__ == "__main__":
+    mp.set_start_method('spawn')
     main()

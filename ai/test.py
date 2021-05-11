@@ -3,6 +3,7 @@ import coloredlogs
 from Arena import Arena
 from gomoku import GomokuGame
 import numpy as np
+import threading
 
 log = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG')

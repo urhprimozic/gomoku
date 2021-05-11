@@ -4,7 +4,8 @@ import sys
 from collections import deque
 from pickle import Pickler, Unpickler
 from random import shuffle
-
+import threading
+from multiprocessing import Pool
 import numpy as np
 from tqdm import tqdm
 
@@ -67,6 +68,7 @@ class Coach():
 
             if r != 0:
                 return [(x[0], x[2], r * ((-1) ** (x[1] != self.curPlayer))) for x in trainExamples]
+   
 
     def learn(self):
         """
@@ -79,7 +81,7 @@ class Coach():
 
         for i in range(1, self.args.numIters + 1):
             # bookkeeping
-            log.info(f'Starting Iter #{i} ...')
+            log.info(f'Starting Iter #{i}/{self.args.numIters} ...')
             # examples of the iteration
             if not self.skipFirstSelfPlay or i > 1:
                 iterationTrainExamples = deque([], maxlen=self.args.maxlenOfQueue)
