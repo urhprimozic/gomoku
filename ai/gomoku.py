@@ -104,7 +104,6 @@ class GomokuGame(Game):
         return stevec >= 5
 
     def getGameEnded(self, board, player):
-        player = -player
         #print(self.display(board))
         """
         Input:
@@ -121,26 +120,39 @@ class GomokuGame(Game):
         # stolpci
         for stolpec in range(self.size):
             if self.pet_v_vrsto(self.DOL, player, (0, stolpec), board):
-                return player
+                return 1
+            if self.pet_v_vrsto(self.DOL, -player, (0, stolpec), board):
+                return -1
 
         # vrstice
         for vrstica in range(self.size):
             if self.pet_v_vrsto(self.DESNO, player, (vrstica, 0), board):
-                return player
+                return 1
+            if self.pet_v_vrsto(self.DESNO, -player, (vrstica, 0), board):
+                return -1
 
         # diagonale pod glavno diagonalo
         for vrstica in range(self.size):
             if self.pet_v_vrsto(self.DESNO_DOL, player, (vrstica, 0), board):
-                return player
+                return 1
             if self.pet_v_vrsto(self.DESNO_GOR, player, (vrstica, 0), board):
-                return player
+                return 1
+            if self.pet_v_vrsto(self.DESNO_DOL, -player, (vrstica, 0), board):
+                return -1
+            if self.pet_v_vrsto(self.DESNO_GOR, -player, (vrstica, 0), board):
+                return -1
 
         # diagonale nad glavno diagonalo
         for stolpec in range(1, self.size):
             if self.pet_v_vrsto(self.DESNO_DOL, player, (0, stolpec), board):
-                return player
+                return 1
             if self.pet_v_vrsto(self.DESNO_GOR, player, (0, stolpec), board):
-                return player
+                return 1
+            if self.pet_v_vrsto(self.DESNO_DOL, -player, (0, stolpec), board):
+                return -1
+            if self.pet_v_vrsto(self.DESNO_GOR, -player, (0, stolpec), board):
+                return -1
+        
 
         # če smo tukaj, nihče ni zmagal
         for i, j in self.actions:
