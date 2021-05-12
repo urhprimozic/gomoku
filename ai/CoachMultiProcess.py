@@ -58,7 +58,7 @@ def executeEpisode(_):
                            pi is the MCTS informed policy vector, v is +1 if
                            the player eventually won the game, else -1.
         """
-        log.info('Running Episode!')
+        print('#', end='') 
         trainExamples = []
         board = game.getInitBoard()
         curPlayer = 1
