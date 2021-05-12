@@ -1,3 +1,7 @@
+# calculations
+*.examples
+*.tar
+
 # python
 __pycache__
 ai/tolpen_tmp.py

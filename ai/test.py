@@ -1,4 +1,6 @@
 import logging
+from multiprocessing import Pool, dummy
+from platform import win32_edition
 import coloredlogs
 from Arena import Arena
 from gomoku import GomokuGame
@@ -45,7 +47,40 @@ def test_arena(filename='tests.txt'):
             except:
                 print('continuing\n')
         
-    
+def collatz(n):
+    if n % 2 == 0:
+        return n/2
+    return 3*n + 1
+def f(n):
+    # print(f'calculating f{n}')
+    ans = n
+    step = 0
+    while ans != 1:
+        ans = collatz(ans)
+        step += 1
+    return step
+
 
 if __name__ == "__main__":
-    test_arena()
+    log.info('Normal:')
+    N = 50000
+    ans = []
+    for i in range(1,N):
+        ans.append(f(i))
+    log.info('finished')
+   # print(ans[:10])
+    
+    ans = []
+    log.info('pool:')
+    with Pool() as p:
+        ans = p.map(f, range(1,N))
+    log.info('finished')
+   # print(ans[:10])
+
+    ans = []
+    log.info('pool-threading:')
+    with dummy.Pool() as p:
+        ans = p.map(f, range(1,N))
+    log.info('finished')
+   # print(ans[:10])
+
