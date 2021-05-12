@@ -106,67 +106,67 @@ if __name__ == "__main__":
     skipFirstSelfPlay = False  # can be overriden in loadTrainExamples()
 
     for i in range(1, args.numIters + 1):
-            # bookkeeping
-            log.info(f'Starting Iter #{i}/{args.numIters} ...')
-            # examples of the iteration
-            if not skipFirstSelfPlay or i > 1:
-                iterationTrainExamples = deque([], maxlen=args.maxlenOfQueue)
-                # iterations
-               # tmp =  [MCTS(game, nnet, args) for i in range(args.numEps)]
-                try:
-                   # Multithreading: 
-                   # with dummy.Pool() as p:
-                    with Pool(NUMBER_OF_CORES) as p:
-                        # logging.info('we in pool bojs')
-                        raw = p.map(executeEpisode,range(args.numEps))
-                    iterationTrainExamples = deque(raw)
-                    logging.info('pool finished')
-                except Exception:
-                    logging.exception('sth wrong', stacklevel=20, stack_info=True)
-                    exit()
-                # for _ in tqdm(range(args.numEps), desc="Self Play"):
-                #     mcts = MCTS(game, nnet, args)  # reset search tree
-                #     iterationTrainExamples += executeEpisode()
+        # bookkeeping
+        log.info(f'Starting Iter #{i}/{args.numIters} ...')
+        # examples of the iteration
+        if not skipFirstSelfPlay or i > 1:
+            iterationTrainExamples = deque([], maxlen=args.maxlenOfQueue)
+            # iterations
+            # tmp =  [MCTS(game, nnet, args) for i in range(args.numEps)]
+            try:
+                # Multithreading: 
+                # with dummy.Pool() as p:
+                with Pool(NUMBER_OF_CORES) as p:
+                    # logging.info('we in pool bojs')
+                    raw = p.map(executeEpisode,range(args.numEps))
+                iterationTrainExamples = deque(raw)
+                logging.info('pool finished')
+            except Exception:
+                logging.exception('sth wrong', stacklevel=20, stack_info=True)
+                exit()
+            # for _ in tqdm(range(args.numEps), desc="Self Play"):
+            #     mcts = MCTS(game, nnet, args)  # reset search tree
+            #     iterationTrainExamples += executeEpisode()
 
-                # save the iteration examples to the history 
-                trainExamplesHistory.append(iterationTrainExamples)
+            # save the iteration examples to the history 
+            trainExamplesHistory.append(iterationTrainExamples)
 
-            if len(trainExamplesHistory) > args.numItersForTrainExamplesHistory:
-                log.warning(
-                    f"Removing the oldest entry in trainExamples. len(trainExamplesHistory) = {len(trainExamplesHistory)}")
-                trainExamplesHistory.pop(0)
-            # backup history to a file
-            # NB! the examples were collected using the model from the previous iteration, so (i-1)  
-            #TODO 
-            # saveTrainExamples(i - 1)
+        if len(trainExamplesHistory) > args.numItersForTrainExamplesHistory:
+            log.warning(
+                f"Removing the oldest entry in trainExamples. len(trainExamplesHistory) = {len(trainExamplesHistory)}")
+            trainExamplesHistory.pop(0)
+        # backup history to a file
+        # NB! the examples were collected using the model from the previous iteration, so (i-1)  
+        #TODO 
+        # saveTrainExamples(i - 1)
 
-            # shuffle examples before training
-            trainExamples = []
-            for e in trainExamplesHistory:
-                trainExamples.extend(e)
-            shuffle(trainExamples)
+        # shuffle examples before training
+        trainExamples = []
+        for e in trainExamplesHistory:
+            trainExamples.extend(e)
+        shuffle(trainExamples)
 
-            # training new network, keeping a copy of the old one
-            nnet.save_checkpoint(folder=args.checkpoint, filename='temp.pth.tar')
-            pnet.load_checkpoint(folder=args.checkpoint, filename='temp.pth.tar')
-            pmcts = MCTS(game, pnet, args)
+        # training new network, keeping a copy of the old one
+        nnet.save_checkpoint(folder=args.checkpoint, filename='temp.pth.tar')
+        pnet.load_checkpoint(folder=args.checkpoint, filename='temp.pth.tar')
+        pmcts = MCTS(game, pnet, args)
 
-            nnet.train(trainExamples)
-            nmcts = MCTS(game, nnet, args)
+        nnet.train(trainExamples)
+        nmcts = MCTS(game, nnet, args)
 
-            log.info('PITTING AGAINST PREVIOUS VERSION')
-            arena = Arena(lambda x: np.argmax(pmcts.getActionProb(x, temp=0)),
-                          lambda x: np.argmax(nmcts.getActionProb(x, temp=0)), game)
-            pwins, nwins, draws = arena.playGames(args.arenaCompare)
+        log.info('PITTING AGAINST PREVIOUS VERSION')
+        arena = Arena(lambda x: np.argmax(pmcts.getActionProb(x, temp=0)),
+                        lambda x: np.argmax(nmcts.getActionProb(x, temp=0)), game)
+        pwins, nwins, draws = arena.playGames(args.arenaCompare)
 
-            log.info('NEW/PREV WINS : %d / %d ; DRAWS : %d' % (nwins, pwins, draws))
-            if pwins + nwins == 0 or float(nwins) / (pwins + nwins) < args.updateThreshold:
-                log.info('REJECTING NEW MODEL')
-                nnet.load_checkpoint(folder=args.checkpoint, filename='temp.pth.tar')
-            else:
-                log.info('ACCEPTING NEW MODEL')
-                nnet.save_checkpoint(folder=args.checkpoint, filename=getCheckpointFile(i))
-                nnet.save_checkpoint(folder=args.checkpoint, filename='best.pth.tar')
+        log.info('NEW/PREV WINS : %d / %d ; DRAWS : %d' % (nwins, pwins, draws))
+        if pwins + nwins == 0 or float(nwins) / (pwins + nwins) < args.updateThreshold:
+            log.info('REJECTING NEW MODEL')
+            nnet.load_checkpoint(folder=args.checkpoint, filename='temp.pth.tar')
+        else:
+            log.info('ACCEPTING NEW MODEL')
+            nnet.save_checkpoint(folder=args.checkpoint, filename=getCheckpointFile(i))
+            nnet.save_checkpoint(folder=args.checkpoint, filename='best.pth.tar')
 
 
 
