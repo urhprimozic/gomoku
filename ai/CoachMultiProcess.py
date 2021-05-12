@@ -30,7 +30,7 @@ args = dotdict({
     'arenaCompare': 40, #40,         # Number of games to play during arena play to determine if new net will be accepted.
     'cpuct': 3,
 
-    'checkpoint': './test_2/',
+    'checkpoint': './test_4/',
     'load_model': False,
     'load_folder_file': ('/dev/models/8x100x50','best.pth.tar'),
     'numItersForTrainExamplesHistory': 20,
@@ -58,7 +58,7 @@ def executeEpisode(_):
                            pi is the MCTS informed policy vector, v is +1 if
                            the player eventually won the game, else -1.
         """
-        print('#', end='') 
+        print('X', end='')#, flush=True)#, end='') 
         trainExamples = []
         board = game.getInitBoard()
         curPlayer = 1
