@@ -3,9 +3,11 @@ from multiprocessing import Pool, dummy
 from platform import win32_edition
 import coloredlogs
 from Arena import Arena
+from MCTS import MCTS
 from gomoku import GomokuGame
 import numpy as np
-import threading
+from utils import dotdict
+from gomokuNNet import GomokuNNet, NNetWrapper
 
 log = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG')
@@ -60,27 +62,44 @@ def f(n):
         step += 1
     return step
 
+def nn_move(board, mcts, player, game):
 
+    canonicalBoard = game.getCanonicalForm(board, player)
+    pi = mcts.getActionProb(canonicalBoard, temp=0)
+    return np.argmax(pi)
+    #return  np.random.choice(len(pi), p=pi)
+
+def human_vs_nn(num, nnet,  args, game):
+    '''
+    num - število iger za arena()
+    nnet- nevronska mreža
+    '''
+    #game = GomokuGame(15)
+    mcts = MCTS(game, nnet, args)
+    # -1 ker je drugi
+    arena = Arena(human_player, lambda b : nn_move(b, mcts, -1, game), game, display=game.display)
+    arena.playGames(num, verbose=True)
+
+args = dotdict({
+    'numIters': 10,
+    'numEps': 50,#100,              # Number of complete self-play games to simulate during a new iteration.
+    'tempThreshold': 15,        #
+    'updateThreshold': 0.6,     # During arena playoff, new neural net will be accepted if threshold or more of games are won.
+    'maxlenOfQueue': 90000, #200000,    # Number of game examples to train the neural networks.
+    'numMCTSSims': 140, #25,          # Number of games moves for MCTS to simulate.
+    'arenaCompare': 40, #40,         # Number of games to play during arena play to determine if new net will be accepted.
+    'cpuct': 1,
+
+    'checkpoint': './test_1/',
+    'load_model': False,
+    'load_folder_file': ('/dev/models/8x100x50','best.pth.tar'),
+    'numItersForTrainExamplesHistory': 20,
+
+})
 if __name__ == "__main__":
-    log.info('Normal:')
-    N = 50000
-    ans = []
-    for i in range(1,N):
-        ans.append(f(i))
-    log.info('finished')
-   # print(ans[:10])
-    
-    ans = []
-    log.info('pool:')
-    with Pool() as p:
-        ans = p.map(f, range(1,N))
-    log.info('finished')
-   # print(ans[:10])
+    game = GomokuGame(15)
+    nnet = NNetWrapper(game)
+    nnet.load_checkpoint(folder='test_1', filename='temp.pth.tar')#filename='best.pth.tar')
+    human_vs_nn(4, nnet, args, game)
 
-    ans = []
-    log.info('pool-threading:')
-    with dummy.Pool() as p:
-        ans = p.map(f, range(1,N))
-    log.info('finished')
-   # print(ans[:10])
 
