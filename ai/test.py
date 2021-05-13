@@ -63,7 +63,6 @@ def f(n):
     return step
 
 def nn_move(board, mcts, player, game):
-
     canonicalBoard = game.getCanonicalForm(board, player)
     pi = mcts.getActionProb(canonicalBoard, temp=0)
     return np.argmax(pi)
@@ -77,7 +76,7 @@ def human_vs_nn(num, nnet,  args, game):
     #game = GomokuGame(15)
     mcts = MCTS(game, nnet, args)
     # -1 ker je drugi
-    arena = Arena(human_player, lambda b : nn_move(b, mcts, -1, game), game, display=game.display)
+    arena = Arena(human_player, lambda b :  np.argmax(mcts.getActionProb(b, temp=0)), game, display=game.display)#nn_move(b, mcts, -1, game)
     arena.playGames(num, verbose=True)
 
 args = dotdict({
@@ -86,9 +85,10 @@ args = dotdict({
     'tempThreshold': 15,        #
     'updateThreshold': 0.6,     # During arena playoff, new neural net will be accepted if threshold or more of games are won.
     'maxlenOfQueue': 90000, #200000,    # Number of game examples to train the neural networks.
-    'numMCTSSims': 140, #25,          # Number of games moves for MCTS to simulate.
+    'numMCTSSims': 500, #25,          # Number of games moves for MCTS to simulate.
     'arenaCompare': 40, #40,         # Number of games to play during arena play to determine if new net will be accepted.
     'cpuct': 1,
+    'timeLimit' :4.9, 
 
     'checkpoint': './test_1/',
     'load_model': False,
@@ -99,7 +99,8 @@ args = dotdict({
 if __name__ == "__main__":
     game = GomokuGame(15)
     nnet = NNetWrapper(game)
-    nnet.load_checkpoint(folder='test_1', filename='temp.pth.tar')#filename='best.pth.tar')
+    # nnet.load_checkpoint(folder='tests/test_0_small', filename='temp.pth.tar')#filename='best.pth.tar')
     human_vs_nn(4, nnet, args, game)
+
 
 

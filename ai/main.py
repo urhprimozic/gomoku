@@ -21,6 +21,7 @@ args = dotdict({
     'numMCTSSims': 12, #25,          # Number of games moves for MCTS to simulate.
     'arenaCompare': 40, #40,         # Number of games to play during arena play to determine if new net will be accepted.
     'cpuct': 1,
+        'timeLimit' :4.9, 
 
     'checkpoint': './test_1/',
     'load_model': False,

@@ -1,6 +1,6 @@
 import logging
 import math
-
+import time
 import numpy as np
 
 EPS = 1e-8
@@ -34,7 +34,12 @@ class MCTS():
             probs: a policy vector where the probability of the ith action is
                    proportional to Nsa[(s,a)]**(1./temp)
         """
+        if not self.args.timeLimit is None:
+            start_time = time.time()
         for i in range(self.args.numMCTSSims):
+            if not self.args.timeLimit is None:
+                if time.time() - start_time >= self.args.timeLimit:
+                    break 
             self.search(canonicalBoard)
 
         s = self.game.stringRepresentation(canonicalBoard)
