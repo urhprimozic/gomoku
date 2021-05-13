@@ -59,7 +59,7 @@ def executeEpisode(_):
                            pi is the MCTS informed policy vector, v is +1 if
                            the player eventually won the game, else -1.
         """
-        print('X', end='')#, flush=True)#, end='') 
+        print('X', end='', flush=True)#, flush=True)#, end='') 
         trainExamples = []
         board = game.getInitBoard()
         curPlayer = 1
@@ -82,6 +82,7 @@ def executeEpisode(_):
 
             if r != 0:
                 return [(x[0], x[2], r * ((-1) ** (x[1] != curPlayer))) for x in trainExamples]
+        print('O', end='', flush=True)
 
 def getCheckpointFile(self, iteration):
     return 'checkpoint_' + str(iteration) + '.pth.tar'
