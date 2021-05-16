@@ -21,17 +21,17 @@ log = logging.getLogger(__name__)
 coloredlogs.install(level='INFO')  #
 
 args = dotdict({
-    'numIters': 20,
-    'numEps': 100,#100,              # Number of complete self-play games to simulate during a new iteration.
+    'numIters': 10,#20,
+    'numEps': 50,#100,              # Number of complete self-play games to simulate during a new iteration.
     'tempThreshold': 15,        #
     'updateThreshold': 0.6,     # During arena playoff, new neural net will be accepted if threshold or more of games are won.
     'maxlenOfQueue': 90000, #200000,    # Number of game examples to train the neural networks.
     'numMCTSSims': 20, #25,          # Number of games moves for MCTS to simulate.
-    'arenaCompare': 40, #40,         # Number of games to play during arena play to determine if new net will be accepted.
+    'arenaCompare': 1, #40,         # Number of games to play during arena play to determine if new net will be accepted.
     'cpuct': 3,
     'timeLimit' :4.9, 
 
-    'checkpoint': './small_I20E100M20/',
+    'checkpoint': '/big_i10e500s20/',
     'load_model': False,
     'load_folder_file': ('/dev/models/8x100x50','best.pth.tar'),
     'numItersForTrainExamplesHistory': 20,
@@ -82,7 +82,7 @@ def executeEpisode(_):
 
             if r != 0:
                 return [(x[0], x[2], r * ((-1) ** (x[1] != curPlayer))) for x in trainExamples]
-        print('O', end='', flush=True)
+        #print('O', end='', flush=True)
 
 def getCheckpointFile(self, iteration):
     return 'checkpoint_' + str(iteration) + '.pth.tar'
@@ -115,17 +115,14 @@ if __name__ == "__main__":
             iterationTrainExamples = deque([], maxlen=args.maxlenOfQueue)
             # iterations
             # tmp =  [MCTS(game, nnet, args) for i in range(args.numEps)]
-            try:
-                # Multithreading: 
-                # with dummy.Pool() as p:
-                with Pool(NUMBER_OF_CORES) as p:
-                    # logging.info('we in pool bojs')
-                    raw = p.map(executeEpisode,range(args.numEps))
-                iterationTrainExamples = deque(raw)
-                logging.info('pool finished')
-            except Exception:
-                logging.exception('sth wrong', stacklevel=20, stack_info=True)
-                exit()
+            
+            # Multithreading: 
+            # with dummy.Pool() as p:
+            with Pool(NUMBER_OF_CORES) as p:
+                # logging.info('we in pool bojs')
+                raw = p.map(executeEpisode,range(args.numEps))
+            iterationTrainExamples = deque(raw)
+            logging.info('pool finished')
             # for _ in tqdm(range(args.numEps), desc="Self Play"):
             #     mcts = MCTS(game, nnet, args)  # reset search tree
             #     iterationTrainExamples += executeEpisode()

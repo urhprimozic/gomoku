@@ -14,14 +14,14 @@ from torch.autograd import Variable
 from NeuralNet import NeuralNet
 import numpy as np
 import os
-class GomokuNNet(nn.Module):
+class GomokuNNetSmall(nn.Module):
     def __init__(self, game, args):
         # game params
         self.board_x, self.board_y = game.getBoardSize()
         self.action_size = game.getActionSize()
         self.args = args
 
-        super(GomokuNNet, self).__init__()
+        super(GomokuNNetSmall, self).__init__()
         self.conv1 = nn.Conv2d(1, args.num_channels, 3, stride=1, padding=1)
         self.conv2 = nn.Conv2d(args.num_channels, args.num_channels, 3, stride=1)
        # self.conv3 = nn.Conv2d(args.num_channels, args.num_channels, 3, stride=1)
@@ -58,14 +58,14 @@ class GomokuNNet(nn.Module):
         v = self.fc4(s)                                                                          # batch_size x 1
 
         return F.log_softmax(pi, dim=1), torch.tanh(v)
-class GomokuNNetBig(nn.Module):
+class GomokuNNet(nn.Module):
     def __init__(self, game, args):
         # game params
         self.board_x, self.board_y = game.getBoardSize()
         self.action_size = game.getActionSize()
         self.args = args
 
-        super(GomokuNNetBig, self).__init__()
+        super(GomokuNNet, self).__init__()
         self.conv1 = nn.Conv2d(1, args.num_channels, 3, stride=1, padding=1)
         self.conv2 = nn.Conv2d(args.num_channels, args.num_channels, 3, stride=1, padding=1)
         self.conv3 = nn.Conv2d(args.num_channels, args.num_channels, 3, stride=1)
@@ -139,7 +139,11 @@ class NNetWrapper(NeuralNet):
             t = tqdm(range(batch_count), desc='Training Net')
             for _ in t:
                 sample_ids = np.random.randint(len(examples), size=args.batch_size)
+                print('len(sample_ids): ',len(sample_ids))
+
                 boards, pis, vs = list(zip(*[examples[i] for i in sample_ids]))
+                print( 'len(list(zip(..): ' , len(list(zip(*[examples[i] for i in sample_ids]))))
+                print('len(examples): ', len(examples))
                 boards = torch.FloatTensor(np.array(boards).astype(np.float64))
                 target_pis = torch.FloatTensor(np.array(pis))
                 target_vs = torch.FloatTensor(np.array(vs).astype(np.float64))
