@@ -31,7 +31,7 @@ args = dotdict({
     'cpuct': 3,
     'timeLimit' :4.9, 
 
-    'checkpoint': '/big_i10e500s20/',
+    'checkpoint': './tests/big_i10e500s20/',
     'load_model': False,
     'load_folder_file': ('/dev/models/8x100x50','best.pth.tar'),
     'numItersForTrainExamplesHistory': 20,
