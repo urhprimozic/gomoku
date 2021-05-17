@@ -20,24 +20,24 @@ log = logging.getLogger(__name__)
 
 coloredlogs.install(level='INFO')  #
 
-args1 = dotdict({
+args = dotdict({
     'numIters': 10,#20,
-    'numEps': 50,#100,              # Number of complete self-play games to simulate during a new iteration.
+    'numEps': 40,#100,              # Number of complete self-play games to simulate during a new iteration.
     'tempThreshold': 15,        #
     'updateThreshold': 0.6,     # During arena playoff, new neural net will be accepted if threshold or more of games are won.
     'maxlenOfQueue': 90000, #200000,    # Number of game examples to train the neural networks.
     'numMCTSSims': 20, #25,          # Number of games moves for MCTS to simulate.
-    'arenaCompare': 40, #40,         # Number of games to play during arena play to determine if new net will be accepted.
+    'arenaCompare': 20, #40,         # Number of games to play during arena play to determine if new net will be accepted.
     'cpuct': 3,
     'timeLimit' :4.9, 
 
-    'checkpoint': './tests/big_i10e500s20a40/',
+    'checkpoint': './tests/big_i10e40s20a20_1/',
     'load_model': False,
     'load_folder_file': ('/dev/models/8x100x50','best.pth.tar'),
     'numItersForTrainExamplesHistory': 20,
 
 })
-args = dotdict({
+args1 = dotdict({
     'numIters': 1,#20,
     'numEps': 2,#100,              # Number of complete self-play games to simulate during a new iteration.
     'tempThreshold': 15,        #
@@ -208,7 +208,7 @@ if __name__ == "__main__":
 
         nnet.train(trainExamples)
         nmcts = MCTS(game, nnet, args)
-        
+
         log.info('PITTING AGAINST PREVIOUS VERSION')
         arena = Arena(lambda x: np.argmax(pmcts.getActionProb(x, temp=0)),
                         lambda x: np.argmax(nmcts.getActionProb(x, temp=0)), game)
