@@ -1,5 +1,5 @@
 import logging
-
+from multiprocessing import Pool
 from tqdm import tqdm
 
 log = logging.getLogger(__name__)
@@ -48,14 +48,16 @@ class Arena():
                 #print("Turn ", str(it), "Player ", str(curPlayer))
                 log.info(f'Turn {str(it)} Player {str(curPlayer)}')
                 self.display(board)
+            print('\t getting action', flush=True)
             action = players[curPlayer + 1](self.game.getCanonicalForm(board, curPlayer))
-
+            print('\t calculation valids', flush=True)
             valids = self.game.getValidMoves(self.game.getCanonicalForm(board, curPlayer), 1)
 
             if valids[action] == 0:
                 log.error(f'Action {action} is not valid!')
                 log.debug(f'valids = {valids}')
                 assert valids[action] > 0
+            print('\t playing action', flush=True)
             board, curPlayer = self.game.getNextState(board, curPlayer, action)
         if verbose:
             assert self.display
@@ -63,7 +65,59 @@ class Arena():
             log.info(f'Game over: Turn {str(it)} Result {str(self.game.getGameEnded(board, 1))}')
             self.display(board)
         return curPlayer * self.game.getGameEnded(board, curPlayer)
+    def playGamesMultiProcess(self, num, verbose=False):
+        raise NotImplementedError('Doesnt work due to multiprocces being naješen as fuck')
+        """
+        Plays num games in which player1 starts num/2 games and player2 starts
+        num/2 games.
 
+        Returns:
+            oneWon: games won by player1
+            twoWon: games won by player2
+            draws:  games won by nobody
+        """
+        num = int(num / 2)
+        oneWon = 0
+        twoWon = 0
+        draws = 0
+        log.info('Starting arena compare..')
+        def f(_):
+            print('X', end='', flush=True)
+            return self.playGame(verbose=verbose)
+
+
+        with Pool() as p:
+            results = p.map(f, range(num))
+        for gameResult in results:
+            if gameResult == 1:
+                oneWon += 1
+            elif gameResult == -1:
+                twoWon += 1
+            else:
+                draws += 1
+
+       #  for _ in tqdm(range(num), desc="Arena.playGames (1)"):
+       #      gameResult = self.playGame(verbose=verbose)
+       #      if gameResult == 1:
+       #          oneWon += 1
+       #      elif gameResult == -1:
+       #          twoWon += 1
+       #      else:
+       #          draws += 1
+# 
+        self.player1, self.player2 = self.player2, self.player1
+
+        with Pool() as p:
+            results = p.map(f, range(num))
+        for gameResult in results:
+            if gameResult == -1:
+                oneWon += 1
+            elif gameResult == 1:
+                twoWon += 1
+            else:
+                draws += 1
+
+        return oneWon, twoWon, draws
     def playGames(self, num, verbose=False):
         """
         Plays num games in which player1 starts num/2 games and player2 starts

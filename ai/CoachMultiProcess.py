@@ -20,9 +20,26 @@ log = logging.getLogger(__name__)
 
 coloredlogs.install(level='INFO')  #
 
-args = dotdict({
+args1 = dotdict({
     'numIters': 10,#20,
     'numEps': 50,#100,              # Number of complete self-play games to simulate during a new iteration.
+    'tempThreshold': 15,        #
+    'updateThreshold': 0.6,     # During arena playoff, new neural net will be accepted if threshold or more of games are won.
+    'maxlenOfQueue': 90000, #200000,    # Number of game examples to train the neural networks.
+    'numMCTSSims': 20, #25,          # Number of games moves for MCTS to simulate.
+    'arenaCompare': 40, #40,         # Number of games to play during arena play to determine if new net will be accepted.
+    'cpuct': 3,
+    'timeLimit' :4.9, 
+
+    'checkpoint': './tests/big_i10e500s20a40/',
+    'load_model': False,
+    'load_folder_file': ('/dev/models/8x100x50','best.pth.tar'),
+    'numItersForTrainExamplesHistory': 20,
+
+})
+args = dotdict({
+    'numIters': 1,#20,
+    'numEps': 2,#100,              # Number of complete self-play games to simulate during a new iteration.
     'tempThreshold': 15,        #
     'updateThreshold': 0.6,     # During arena playoff, new neural net will be accepted if threshold or more of games are won.
     'maxlenOfQueue': 90000, #200000,    # Number of game examples to train the neural networks.
@@ -31,7 +48,7 @@ args = dotdict({
     'cpuct': 3,
     'timeLimit' :4.9, 
 
-    'checkpoint': './tests/big_i10e500s20/',
+    'checkpoint': './tests/arenaCompare1/',
     'load_model': False,
     'load_folder_file': ('/dev/models/8x100x50','best.pth.tar'),
     'numItersForTrainExamplesHistory': 20,
@@ -83,6 +100,45 @@ def executeEpisode(_):
             if r != 0:
                 return [(x[0], x[2], r * ((-1) ** (x[1] != curPlayer))) for x in trainExamples]
         #print('O', end='', flush=True)
+
+def playGame(player1, player2, game, display, verbose=False):
+        """
+        Executes one episode of a game.
+
+        Returns:
+            either
+                winner: player who won the game (1 if player1, -1 if player2)
+            or
+                draw result returned from the game that is neither 1, -1, nor 0.
+        """
+        players = [player2, None, player1]
+        curPlayer = 1
+        board = game.getInitBoard()
+        it = 0
+        while game.getGameEnded(board, curPlayer) == 0:
+            print(f'interation: {it}')
+            it += 1
+            if verbose:
+                assert display
+                #print("Turn ", str(it), "Player ", str(curPlayer))
+                log.info(f'Turn {str(it)} Player {str(curPlayer)}')
+                display(board)
+          #  print('Getting action')
+            action = players[curPlayer + 1](game.getCanonicalForm(board, curPlayer))
+
+            valids = game.getValidMoves(game.getCanonicalForm(board, curPlayer), 1)
+
+            if valids[action] == 0:
+                log.error(f'Action {action} is not valid!')
+                log.debug(f'valids = {valids}')
+                assert valids[action] > 0
+            board, curPlayer = game.getNextState(board, curPlayer, action)
+        if verbose:
+            assert display
+            #print("Game over: Turn ", str(it), "Result ", str(game.getGameEnded(board, 1)))
+            log.info(f'Game over: Turn {str(it)} Result {str(game.getGameEnded(board, 1))}')
+            display(board)
+        return curPlayer * game.getGameEnded(board, curPlayer)
 
 def getCheckpointFile(self, iteration):
     return 'checkpoint_' + str(iteration) + '.pth.tar'
@@ -152,7 +208,7 @@ if __name__ == "__main__":
 
         nnet.train(trainExamples)
         nmcts = MCTS(game, nnet, args)
-
+        
         log.info('PITTING AGAINST PREVIOUS VERSION')
         arena = Arena(lambda x: np.argmax(pmcts.getActionProb(x, temp=0)),
                         lambda x: np.argmax(nmcts.getActionProb(x, temp=0)), game)
@@ -166,7 +222,84 @@ if __name__ == "__main__":
             log.info('ACCEPTING NEW MODEL')
             nnet.save_checkpoint(folder=args.checkpoint, filename=getCheckpointFile(i))
             nnet.save_checkpoint(folder=args.checkpoint, filename='best.pth.tar')
-
+        # log.info('PITTING AGAINST PREVIOUS VERSION')
+# 
+        # arena = Arena(lambda x: np.argmax(pmcts.getActionProb(x, temp=0)),
+        #                 lambda x: np.argmax(nmcts.getActionProb(x, temp=0)), game, display=game.display)
+        # 
+        # 
+        # oneWon_arena = 0
+        # twoWon_arena = 0
+        # draws_arena = 0
+        # log.info('Starting arena compare..')
+        # def f(nn):
+        #     game_cpy = GomokuGame(15)
+        #     nnet = nn[0]
+        #     pnet = nn[1]
+        #    # arena = Arena(lambda x: np.argmax(pmcts.getActionProb(x, temp=0)),
+        #     #            lambda x: np.argmax(nmcts.getActionProb(x, temp=0)), game_cpy, display=game.display)
+        #    # pmcts = MCTS(game, pnet, args)
+        #    # nmcts = MCTS(game, nnet, args)
+        #     print('X', end='', flush=True)
+        #     def p1(x):
+        #         pmcts = MCTS(game_cpy, pnet, args)
+        #         print('\t getting probs', flush=True)
+        #         probs = pmcts.getActionProb(x, temp=0)
+# 
+        #         print('\t returning argmax')
+        #         return np.argmax(probs)
+        #     def p2(x):
+        #         nmcts = MCTS(game_cpy, nnet, args)
+        #         print('\t getting probs', flush=True)
+        #         
+        #         probs = nmcts.getActionProb(x, temp=0)
+        #         print('\t returning argmax')
+        #         return np.argmax(probs)
+        #     arena = Arena(p1, p2, game_cpy, display=game_cpy.display)
+        #     #return playGame(p1, p2, game_cpy, game_cpy.display, verbose=True)
+        #     return arena.playGame(verbose=True)
+# 
+# 
+        # with Pool() as p:
+        #     num_compare = args.arenaCompare
+        #     results_arena = p.map(f, [(nnet, pnet) for i in range(num_compare)])
+        # for gameResult_arena in results_arena:
+        #     if gameResult_arena == 1:
+        #         oneWon_arena += 1
+        #     elif gameResult_arena == -1:
+        #         twoWon_arena += 1
+        #     else:
+        #         draws_arena += 1
+# # 
+        # arena.player1, arena.player2 = arena.player2, arena.player1
+# 
+        # with Pool() as p:
+        #     results_arena = p.map(f, range(args.arenaCompare))
+        # for gameResult_arena in results_arena:
+        #     if gameResult_arena == -1:
+        #         oneWon_arena += 1
+        #     elif gameResult_arena == 1:
+        #         twoWon_arena += 1
+        #     else:
+        #         draws_arena += 1
+# 
+        # pwins, nwins, draws =  oneWon_arena, twoWon_arena, draws_arena
+        # 
+        # 
+        # 
+        # # pwins, nwins, draws = arena.playGamesMultiProcess(args.arenaCompare)
+# 
+        # 
+        # 
+        # log.info('NEW/PREV WINS : %d / %d ; DRAWS : %d' % (nwins, pwins, draws))
+        # if pwins + nwins == 0 or float(nwins) / (pwins + nwins) < args.updateThreshold:
+        #     log.info('REJECTING NEW MODEL')
+        #     nnet.load_checkpoint(folder=args.checkpoint, filename='temp.pth.tar')
+        # else:
+        #     log.info('ACCEPTING NEW MODEL')
+        #     nnet.save_checkpoint(folder=args.checkpoint, filename=nnet.getCheckpointFile(i))
+        #     nnet.save_checkpoint(folder=args.checkpoint, filename='best.pth.tar')
+# 
 
 
    # log.info('Loading the Coach...')
