@@ -157,3 +157,8 @@ class Coach():
 
             # examples based on the model were already collected (loaded)
             self.skipFirstSelfPlay = True
+
+from gomoku import GomokuGame
+
+if __name__ == "__main__":
+    game = GomokuGame

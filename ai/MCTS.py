@@ -80,7 +80,6 @@ class MCTS():
         Returns:
             v: the negative of the value of the current canonicalBoard
         """
-
         s = self.game.stringRepresentation(canonicalBoard)
 
         if s not in self.Es:
@@ -88,7 +87,7 @@ class MCTS():
         if self.Es[s] != 0:
             # terminal node
             return -self.Es[s]
-
+        ######################################################
         if s not in self.Ps:
             # leaf node
             self.Ps[s], v = self.nnet.predict(canonicalBoard)
@@ -110,10 +109,11 @@ class MCTS():
             self.Ns[s] = 0
             return -v
 
+       ##########################################################
         valids = self.Vs[s]
         cur_best = -float('inf')
         best_act = -1
-
+        # print('searching for actions')
         # pick the action with the highest upper confidence bound
         for a in range(self.game.getActionSize()):
             if valids[a]:
