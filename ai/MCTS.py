@@ -34,17 +34,17 @@ class MCTS():
             probs: a policy vector where the probability of the ith action is
                    proportional to Nsa[(s,a)]**(1./temp)
         """
-        print('inside mcts')
+        # print('inside mcts')
         if not self.args.timeLimit is None:
             start_time = time.time()
         for i in range(self.args.numMCTSSims):
             if not self.args.timeLimit is None:
                 if time.time() - start_time >= self.args.timeLimit:
                     break 
-            print('-', end='', flush=True)
+            # print('-', end='', flush=True)
             self.search(canonicalBoard)
-            print('s,', end='', flush=True)
-        print('search completed')
+            # print('s,', end='', flush=True)
+        # print('search completed')
 
         s = self.game.stringRepresentation(canonicalBoard)
         counts = [self.Nsa[(s, a)] if (s, a) in self.Nsa else 0 for a in range(self.game.getActionSize())]
