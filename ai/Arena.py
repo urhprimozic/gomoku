@@ -48,16 +48,16 @@ class Arena():
                 #print("Turn ", str(it), "Player ", str(curPlayer))
                 log.info(f'Turn {str(it)} Player {str(curPlayer)}')
                 self.display(board)
-            print('\t getting action', flush=True)
+            # print('\t getting action', flush=True)
             action = players[curPlayer + 1](self.game.getCanonicalForm(board, curPlayer))
-            print('\t calculation valids', flush=True)
+            # print('\t calculation valids', flush=True)
             valids = self.game.getValidMoves(self.game.getCanonicalForm(board, curPlayer), 1)
 
             if valids[action] == 0:
                 log.error(f'Action {action} is not valid!')
                 log.debug(f'valids = {valids}')
                 assert valids[action] > 0
-            print('\t playing action', flush=True)
+            # print('\t playing action', flush=True)
             board, curPlayer = self.game.getNextState(board, curPlayer, action)
         if verbose:
             assert self.display

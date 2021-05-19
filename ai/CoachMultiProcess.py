@@ -20,7 +20,7 @@ log = logging.getLogger(__name__)
 
 coloredlogs.install(level='INFO')  #
 
-args = dotdict({
+args1 = dotdict({
     'numIters': 10,#20,
     'numEps': 40,#100,              # Number of complete self-play games to simulate during a new iteration.
     'tempThreshold': 15,        #
@@ -37,13 +37,13 @@ args = dotdict({
     'numItersForTrainExamplesHistory': 20,
 
 })
-args1 = dotdict({
-    'numIters': 1,#20,
+args = dotdict({
+    'numIters': 3,#20,
     'numEps': 2,#100,              # Number of complete self-play games to simulate during a new iteration.
     'tempThreshold': 15,        #
     'updateThreshold': 0.6,     # During arena playoff, new neural net will be accepted if threshold or more of games are won.
     'maxlenOfQueue': 90000, #200000,    # Number of game examples to train the neural networks.
-    'numMCTSSims': 20, #25,          # Number of games moves for MCTS to simulate.
+    'numMCTSSims': 2, #25,          # Number of games moves for MCTS to simulate.
     'arenaCompare': 1, #40,         # Number of games to play during arena play to determine if new net will be accepted.
     'cpuct': 3,
     'timeLimit' :4.9, 
@@ -86,8 +86,9 @@ def executeEpisode(_):
             episodeStep += 1
             canonicalBoard = game.getCanonicalForm(board, curPlayer)
             temp = int(episodeStep < args.tempThreshold)
-
+            print('pi')
             pi = mcts.getActionProb(canonicalBoard, temp=temp)
+            print('sym')
             sym = game.getSymmetries(canonicalBoard, pi)
             for b, p in sym:
                 trainExamples.append([b, curPlayer, p, None])
@@ -174,9 +175,37 @@ if __name__ == "__main__":
             
             # Multithreading: 
             # with dummy.Pool() as p:
+            def executeEpisodeT(_):
+                mcts = MCTS(game, nnet, args)
+                print('X', end='', flush=True)#, flush=True)#, end='') 
+                trainExamples = []
+                board = game.getInitBoard()
+                curPlayer = 1
+                episodeStep = 0
+
+                while True:
+                    episodeStep += 1
+                    canonicalBoard = game.getCanonicalForm(board, curPlayer)
+                    temp = int(episodeStep < args.tempThreshold)
+                    print('pi')
+                    pi = mcts.getActionProb(canonicalBoard, temp=temp)
+                    print('sym')
+                    sym = game.getSymmetries(canonicalBoard, pi)
+                    for b, p in sym:
+                        trainExamples.append([b, curPlayer, p, None])
+
+                    action = np.random.choice(len(pi), p=pi)
+                    board, curPlayer = game.getNextState(board, curPlayer, action)
+
+                    r = game.getGameEnded(board, curPlayer)
+
+                    if r != 0:
+                        return [(x[0], x[2], r * ((-1) ** (x[1] != curPlayer))) for x in trainExamples]
+
+
             with Pool(NUMBER_OF_CORES) as p:
                 # logging.info('we in pool bojs')
-                raw = p.map(executeEpisode,range(args.numEps))
+                raw = p.map(executeEpisodeT,range(args.numEps))
             iterationTrainExamples = deque(raw)
             logging.info('pool finished')
             # for _ in tqdm(range(args.numEps), desc="Self Play"):
