@@ -76,7 +76,7 @@ def human_vs_nn(num, nnet,  args, game):
     #game = GomokuGame(15)
     mcts = MCTS(game, nnet, args)
     # -1 ker je drugi
-    arena = Arena(human_player, lambda b :  np.argmax(mcts.getActionProb(b, temp=0)), game, display=game.display)#nn_move(b, mcts, -1, game)
+    arena = Arena(human_player, lambda b :  np.argmax(mcts.getActionProb(b, temp=15)), game, display=game.display)#nn_move(b, mcts, -1, game)
     arena.playGames(num, verbose=True)
 
 args = dotdict({
@@ -85,10 +85,10 @@ args = dotdict({
     'tempThreshold': 15,        #
     'updateThreshold': 0.6,     # During arena playoff, new neural net will be accepted if threshold or more of games are won.
     'maxlenOfQueue': 90000, #200000,    # Number of game examples to train the neural networks.
-    'numMCTSSims': 500, #25,          # Number of games moves for MCTS to simulate.
+    'numMCTSSims': 5000, #25,          # Number of games moves for MCTS to simulate.
     'arenaCompare': 40, #40,         # Number of games to play during arena play to determine if new net will be accepted.
     'cpuct': 1,
-    'timeLimit' :4.9, 
+    'timeLimit' :5, 
 
     'checkpoint': './test_1/',
     'load_model': False,
@@ -97,10 +97,18 @@ args = dotdict({
 
 })
 if __name__ == "__main__":
+    # Tk dobiš mrežo:
+    # narediš novo igro
     game = GomokuGame(15)
+    #narediš novo mrežp
     nnet = NNetWrapper(game)
-    # nnet.load_checkpoint(folder='tests/test_0_small', filename='temp.pth.tar')#filename='best.pth.tar')
-    human_vs_nn(4, nnet, args, game)
+    # zlovdaš mrežo iz falja
+    nnet.load_checkpoint('./pot/do/fajla/', 'best.pth.tar')
+    # in pol si bog, ker boš naredu tanaješen del projekta
+
+    #nnet.load_checkpoint('./eval/ijs/', 'checkpoint_4.pth.tar')
+    
+    # human_vs_nn(4, nnet, args, game)
 
 
 
