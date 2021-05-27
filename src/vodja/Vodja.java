@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.swing.SwingWorker;
 
+import ai.djl.translate.TranslateException;
 import gui.GlavnoOkno;
 import inteligenca.Inteligenca;
 import logika.Game;
@@ -68,7 +69,7 @@ public class Vodja {
 		Igra zacetnaIgra = igra;
 		SwingWorker<Koordinati, Void> worker = new SwingWorker<Koordinati, Void> () {
 			@Override
-			protected Koordinati doInBackground() {
+			protected Koordinati doInBackground() throws TranslateException {
 				if (igra.igralec == 1) {
 					return comp1.izberiPotezo(igra);
 				}

@@ -1,6 +1,7 @@
-import vodja.Vodja;
+
 
 import gui.GlavnoOkno;
+import vodja.Vodja;
 
 //Game loop in to
 
@@ -86,12 +87,11 @@ public class Gomoku {
 //	}
 	
     public static void main(String[] args) {
-    	
 		GlavnoOkno glavno_okno = new GlavnoOkno();
 		glavno_okno.pack();
 		glavno_okno.setVisible(true);
 		Vodja.okno = glavno_okno;
 		
-    	// Gomoku.mctsTest();
+		
     }
 }

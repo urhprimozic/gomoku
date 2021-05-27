@@ -30,14 +30,14 @@ def test_arena_by_hand(num):
 moves = []
 
 def test_arena(filename='tests.txt'):
-    global moves 
+    global moves
     with open(filename, 'r') as f:
         plays = f.read().split('\n\n')
         for play in plays:
             moves = play.split('\n')[::-1] + play.split('\n')[::-1]
             moves = list(map(lambda s : (int(s.split(',')[0]), int(s.split(',')[1])), moves))
             game = GomokuGame(15)
-            
+
             def f(_):
                 global moves
                 ans = actions_raw.index(moves[-1])
@@ -48,7 +48,7 @@ def test_arena(filename='tests.txt'):
                 arena.playGames(2, True)
             except:
                 print('continuing\n')
-        
+
 def collatz(n):
     if n % 2 == 0:
         return n/2
@@ -88,7 +88,7 @@ args = dotdict({
     'numMCTSSims': 5000, #25,          # Number of games moves for MCTS to simulate.
     'arenaCompare': 40, #40,         # Number of games to play during arena play to determine if new net will be accepted.
     'cpuct': 1,
-    'timeLimit' :5, 
+    'timeLimit' :5,
 
     'checkpoint': './test_1/',
     'load_model': False,
@@ -103,12 +103,9 @@ if __name__ == "__main__":
     #narediš novo mrežp
     nnet = NNetWrapper(game)
     # zlovdaš mrežo iz falja
-    nnet.load_checkpoint('./pot/do/fajla/', 'best.pth.tar')
+    nnet.load_checkpoint('..', 'best.pth.tar')
     # in pol si bog, ker boš naredu tanaješen del projekta
 
     #nnet.load_checkpoint('./eval/ijs/', 'checkpoint_4.pth.tar')
-    
+
     human_vs_nn(4, nnet, args, game)
-
-
-
