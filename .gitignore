@@ -27,3 +27,33 @@ ai/tolpen_tmp.py
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+ai/ai_slow/Arena.py
+ai/ai_slow/args.py
+ai/ai_slow/Coach.py
+ai/ai_slow/CoachMultiProcess.py
+ai/ai_slow/eval.sh
+ai/ai_slow/executeEpisodes.py
+ai/ai_slow/Game.py
+ai/ai_slow/gomoku.py
+ai/ai_slow/gomokuNNet.py
+ai/ai_slow/gomokuPlayers.py
+ai/ai_slow/hevristika.py
+ai/ai_slow/hyper_optimisation.py
+ai/ai_slow/learn.py
+ai/ai_slow/load.py
+ai/ai_slow/logika.py
+ai/ai_slow/main.py
+ai/ai_slow/MCTS.py
+ai/ai_slow/NeuralNet.py
+ai/ai_slow/peskovnik.sh
+ai/ai_slow/pit.py
+ai/ai_slow/readPython.java
+ai/ai_slow/requirements.txt
+ai/ai_slow/test.py
+ai/ai_slow/tests.txt
+ai/ai_slow/toJava.py
+ai/ai_slow/trening.py
+ai/ai_slow/ucenje.py
+ai/ai_slow/utils.py
+ai/ai_slow/vodja.py
+GomokuNNet.pt
