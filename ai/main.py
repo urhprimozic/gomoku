@@ -14,7 +14,7 @@ coloredlogs.install(level='INFO')  # Change this to DEBUG to see more info.
 
 args = dotdict({
     'numIters': 100,
-    'numEps': 20,#100,              # Number of complete self-play games to simulate during a new iteration.
+    'numEps': 60,#100,              # Number of complete self-play games to simulate during a new iteration.
     'tempThreshold': 15,        #
     'updateThreshold': 0.6,     # During arena playoff, new neural net will be accepted if threshold or more of games are won.
     'maxlenOfQueue': 90000, #200000,    # Number of game examples to train the neural networks.
@@ -23,7 +23,7 @@ args = dotdict({
     'cpuct': 1,
         'timeLimit' :4.9, 
 
-    'checkpoint': './bigNetTrained/',
+    'checkpoint': './eval/slow/',
     'load_model': False,
     'load_folder_file': ('/dev/models/8x100x50','best.pth.tar'),
     'numItersForTrainExamplesHistory': 20,

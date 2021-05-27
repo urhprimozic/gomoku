@@ -108,7 +108,7 @@ if __name__ == "__main__":
 
     #nnet.load_checkpoint('./eval/ijs/', 'checkpoint_4.pth.tar')
     
-    # human_vs_nn(4, nnet, args, game)
+    human_vs_nn(4, nnet, args, game)
 
 
 
