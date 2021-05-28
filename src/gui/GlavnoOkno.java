@@ -55,7 +55,7 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 		JMenuBar menu_bar = new JMenuBar();
 		this.setJMenuBar(menu_bar);
 		// Nova igra
-		JMenu igra_menu = new JMenu("Nova igra TODO");
+		JMenu igra_menu = new JMenu("Nova igra");
 		menu_bar.add(igra_menu);
 
 
@@ -76,7 +76,7 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 		igraRacunalnikRacunalnik.addActionListener(this);
 
 		//nastavitve
-		JMenu nastavitve_menu = new JMenu("Nastavitve-TODO");
+		JMenu nastavitve_menu = new JMenu("Nastavitve");
 		menu_bar.add(nastavitve_menu);
 
 		
@@ -147,11 +147,11 @@ public class GlavnoOkno extends JFrame implements ActionListener {
 			}
 			else if (stanje == -1 || stanje == 1) {
 				if (Vodja.igra.igralec == 1) {
-					status.setText("Zmagal je bel. Rasist. - " + 
+					status.setText("Zmagal je bel." + 
 					 		Vodja.vrstaIgralca.get(-1));
 				}
 				else {
-					status.setText("Zmagal je črn - " + 
+					status.setText("Zmagal je črn." + 
 							Vodja.vrstaIgralca.get(1));
 				}
 			}
