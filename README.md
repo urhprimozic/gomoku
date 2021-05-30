@@ -12,7 +12,7 @@ _Gomoku game with simple AI. Project for programming 2  on FMF._
 ### Uporaba
 Igro se požene iz datoteke **Gomoku.java**. Odpre se grafični vmesnik. Na vrhu ima orodno vrstico, kjer lahko začnemo novo igro ali spremenimo nastavitve.
 
-Ker je nevronska mreža prevelika za github, je na voljo [tukaj](https://drive.google.com/file/d/1AG9Fzl50kVIEeXK6yySTa0QZbDWp38lI/view). Dobljena datoteka naj bo shranjena v top level mapi.
+Ker je nevronska mreža prevelika za github, je na voljo [tukaj](https://drive.google.com/file/d/16MdSD9MrXKQqXPTWkMArrID-27b_VOom/view?usp=sharing). Dobljena datoteka naj bo shranjena v top level mapi.
 ## Umetna inteligenca
 
 Uporabljava Monte Carlo Tree Search z nevronsko mrežo.
